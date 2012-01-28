@@ -11,7 +11,9 @@ under source control.
 
 /desc_table
     A package to find information about tables.
-   (Primary keys, column-comments etc)
+   (Primary keys, column-comments etc).
+    This package is used for the script
+   /sqlpath/desc.sql
  
 
 /sqlpath
