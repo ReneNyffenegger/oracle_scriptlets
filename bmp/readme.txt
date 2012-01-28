@@ -1,0 +1,3 @@
+-- http://www.adp-gmbh.ch/blog/2005/november/22.html
+-- 
+-- test/test_01 is dependant on blob_wrapper (../blob_wrapper)
