@@ -1,0 +1,22 @@
+An attempt to place some scripts from my website adp-gmbh.ch
+under source control.
+
+/blob_wrapper
+    A small package used to write blobs to a file and
+    read files into blob.
+  
+/bmp
+    A small package that can create simple bitmaps 
+    drawn unto a blob.
+
+/desc_table
+    A package to find information about tables.
+   (Primary keys, column-comments etc)
+ 
+
+/sqlpath
+    The folder sqlpath contains scripts that are supposed to 
+    be called from SQL*Plus. Therefore, they should go
+    to a directory that the environement variable SQLPATH
+    points to. Usually the login.sql script goes there, too.
+
