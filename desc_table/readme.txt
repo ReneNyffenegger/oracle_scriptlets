@@ -1,0 +1,3 @@
+-- http://www.adp-gmbh.ch/blog/2005/september/25.html
+--
+-- See also ../sqlpath/desc.sql
