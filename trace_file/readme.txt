@@ -1,0 +1,2 @@
+--
+-- http://www.adp-gmbh.ch/blog/2006/02/05.php

@@ -1,0 +1,8 @@
+http://hoopercharles.wordpress.com/2011/01/24/watching-consistent-gets-10200-trace-file-parser/
+
+---
+ALTER SESSION SET EVENTS '10046 trace name context forever, level 8';   
+ 
+  http://www.hellodba.com/reader.php?ID=35&lang=en
+
+   
