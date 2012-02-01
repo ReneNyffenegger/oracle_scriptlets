@@ -22,3 +22,8 @@ under source control.
     to a directory that the environement variable SQLPATH
     points to. Usually the login.sql script goes there, too.
 
+
+/trace_file
+    A package to read previously dumped trace file
+   (such as those created by the 10046 event)
+
