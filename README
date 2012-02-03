@@ -12,6 +12,12 @@ under source control.
     drawn unto a blob.
 
 
+/calendar
+    A package to find out when certain dates
+    were. Currently only supporting Easter and
+    dates fixed in their relation to Easter.
+
+
 /desc_table
     A package to find information about tables.
    (Primary keys, column-comments etc).
