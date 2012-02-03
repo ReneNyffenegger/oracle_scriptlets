@@ -1,0 +1,3 @@
+-- http://www.adp-gmbh.ch/blog/2005/october/3.html
+--
+-- Uses ../desc_table to draw ERDs with graphviz/neato

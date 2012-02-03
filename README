@@ -19,6 +19,11 @@ under source control.
    /sqlpath/desc.sql
 
 
+/schema_to_neato
+    A package that uses /desc_table to draw ERDs
+    with graphviz/neato.
+
+
 /sqlpath
     The folder sqlpath contains scripts that are supposed to 
     be called from SQL*Plus. Therefore, they should go
