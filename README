@@ -18,6 +18,11 @@ under source control.
     dates fixed in their relation to Easter.
 
 
+/debugger
+    A package intended to be a wrapper for
+    dbms_debug.
+
+
 /desc_table
     A package to find information about tables.
    (Primary keys, column-comments etc).
