@@ -1,0 +1,2 @@
+-- Some script that are meant to be called from
+-- SQL*Plus in order to control the debuging session.
