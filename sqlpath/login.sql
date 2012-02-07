@@ -4,5 +4,6 @@ set lines            190
 set pages           5000
 set long          100000
 set longchunksize 100000
+set tab              off
 
 define _editor=gvim
