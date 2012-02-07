@@ -18,6 +18,15 @@ under source control.
     dates fixed in their relation to Easter.
 
 
+/create_db_from_cmd.exe
+    A cmd.exe bat file (named go.bat) that creates an oracle
+    instance and a database and installs the data dictionary.
+    The idea is to be able to set various settings (such as
+    instance name or database name in the script and then
+    let the script use these settings)
+
+
+
 /debugger
     A package intended to be a wrapper for
     dbms_debug.
