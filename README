@@ -26,7 +26,6 @@ under source control.
     let the script use these settings)
 
 
-
 /debugger
     A package intended to be a wrapper for
     dbms_debug.
@@ -37,6 +36,10 @@ under source control.
    (Primary keys, column-comments etc).
     This package is used for the script
    /sqlpath/desc.sql
+
+
+/string_op
+    A package for operations on strings (varchar2).
 
 
 /schema_to_neato
