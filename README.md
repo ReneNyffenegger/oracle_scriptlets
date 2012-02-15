@@ -56,8 +56,8 @@ points to. Usually the login.sql script goes there, too.
 A package that 'snaps' v$sqlarea in order to compare it
 later with the newer values in v$sqlarea.  Can be used to
 find SQL statements with high executions, cpu_elapsed time
-or block gets.  The package comes with /sqlpath/ssqlsnap.sql
-and /sqlppath/esqlsnap.sql
+or block gets.  The package comes with /sqlpath/sqlsnaps.sql
+and /sqlpath/sqlsnape.sql
 
 
 # trace_file
