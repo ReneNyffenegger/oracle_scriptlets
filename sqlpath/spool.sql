@@ -1,6 +1,6 @@
 --  Change settings so that output printed to
 --  SQL*Plus (via dbms_output.put_line) can
---  be spooled into a file without heaers
+--  be spooled into a file without headers
 --  or other distracting features.
 --
 --  developed to be used along with dot.sql
