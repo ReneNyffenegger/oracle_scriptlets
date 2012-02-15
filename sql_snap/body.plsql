@@ -7,7 +7,7 @@ create or replace package body sql_snap as
   v$sql_table v$sql_table_t;
 
   procedure start_ is/*{*/
-  --    called by ../sqlpath/ssqlsnap.sql 
+  --    called by ../sqlpath/sqlsnaps.sql 
   begin
       select v$sql_line_t (
 --           sql_text,
@@ -25,7 +25,7 @@ create or replace package body sql_snap as
   end start_;/*}*/
 
   procedure end___ is/*{*/
-  --    called by ../sqlpath/esqlsnap.sql 
+  --    called by ../sqlpath/sqlsnape.sql 
   begin
     for line in (
         select 
