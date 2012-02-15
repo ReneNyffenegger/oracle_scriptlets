@@ -9,10 +9,13 @@
 
 
 @     SET   SYSDBA_PASSWORD=IamSysdba
+@     SET   SYSTEM_PASSWORD=IamSystem
 
 @rem  SET   Used in 'create database' statement:
 @     SET   CHARACTER_SET=AL32UTF8
 @     SET   NATIONAL_CHARACTER_SET=AL16UTF16
+
+@     SET   DB_BLOCK_SIZE=8192
 
 @rem  SET   Where will 'create database' statement go?
 @     SET   TEMP_DIR=c:\temp
@@ -80,7 +83,7 @@
 
 
 @echo       DB_NAME=%DB_NAME% > %PFILE%
-@echo       DB_BLOCK_SIZE=8192 >> %PFILE%
+@echo       DB_BLOCK_SIZE=%DB_BLOCK_SIZE% >> %PFILE%
 @echo       CONTROL_FILES=%CONTROL_FILES% >> %PFILE%
 @echo       UNDO_TABLESPACE=UNDO_TS >> %PFILE%
 
@@ -146,6 +149,7 @@
 @REM    ---------------------------------------------------
 @echo   CREATE DATABASE %DB_NAME% >> %SCRIPT%
 @echo      USER SYS IDENTIFIED BY %SYSDBA_PASSWORD% >> %SCRIPT%
+@echo      USER SYSTEM IDENTIFIED BY %SYSTEM_PASSWORD% >> %SCRIPT%
 @echo      USER SYSTEM IDENTIFIED BY system_password >> %SCRIPT%
 @echo      LOGFILE GROUP 1 ('%DB_FILE_ROOT%\redo01a.log','%DB_FILE_ROOT%\redo01b.log') SIZE 100M BLOCKSIZE 512, >> %SCRIPT%
 @echo              GROUP 2 ('%DB_FILE_ROOT%\redo02a.log','%DB_FILE_ROOT%\redo02b.log') SIZE 100M BLOCKSIZE 512, >> %SCRIPT%
@@ -179,5 +183,6 @@
 
 @       sqlplus sys/%SYSDBA_PASSWORD% as sysdba @%SCRIPT%
 
-
 @       sqlplus sys/%SYSDBA_PASSWORD% as sysdba @build_data_dictionary.sql
+
+@       sqlplus system/%SYSTEM_PASSWORD% @install_product_user_profile.sql

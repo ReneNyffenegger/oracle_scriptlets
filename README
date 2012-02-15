@@ -38,13 +38,13 @@ under source control.
    /sqlpath/desc.sql
 
 
-/string_op
-    A package for operations on strings (varchar2).
-
-
 /schema_to_neato
     A package that uses /desc_table to draw ERDs
     with graphviz/neato.
+
+
+/string_op
+    A package for operations on strings (varchar2).
 
 
 /sqlpath

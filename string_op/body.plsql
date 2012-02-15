@@ -2,7 +2,7 @@ create or replace package body string_op as
 
   function strtok      (str in varchar2, delimiter in varchar2)
      return varchar2_t
-  IS
+  is
     tokens      varchar2_t := varchar2_t();
     i           pls_integer;
     t           varchar2(4000);
