@@ -36,6 +36,11 @@ column-comments etc).  This package is used for the script
 /sqlpath/desc.sql
 
 
+# plscope
+A package that uses the `all_identifiers` view to trace
+function-dependencies in PL/SQL source code.
+
+
 # schema_to_neato
 A package that uses /desc_table to draw ERDs with
 graphviz/neato.
