@@ -1,9 +1,15 @@
 create or replace package body plscope as
 
-    procedure dot_call(object_name_caller in varchar2, name_caller in varchar2, object_name_callee in varchar2, name_callee in varchar2) is/*{*/
+    procedure dot_call(caller in varchar2, callee in varchar2) is/*{*/
     begin
-        dbms_output.put_line ('  "' || object_name_caller || '.' || name_caller || '" -> "' || object_name_callee || '.' || name_callee || '"');
+        dbms_output.put_line('  "' || caller || '" -> "' || callee || '"');
+--      dbms_output.put_line ('  "' || object_name_caller || '.' || name_caller || '" -> "' || object_name_callee || '.' || name_callee || '"');
     end dot_call;/*}*/
+
+    procedure gexf_call(caller in varchar2, callee in varchar2) is/*{*/
+    begin
+        dbms_output.put_line('  <edge source="' || caller || '" target="' || callee || '"/>');
+    end gexf_call;/*}*/
 
     procedure fill_callable(owner_ in varchar2, delete_existing in boolean) is/*{*/
     begin
@@ -67,30 +73,9 @@ create or replace package body plscope as
                      plscope_call     call
              join    plscope_callable caller on  call.caller = caller.signature
              join    plscope_callable callee on  call.callee = callee.signature
-           where
-             callee.object_name not in ('VSMLOG', 'VSMCONST', 'VERWENDUNGSNACHWEIS', 'VSMEXC', 'OUTPUT', 'STRINGUTIL', 'VSMTRIGGER', 'Z2X_ADMLOG', 'BATLOG') and
-             callee.object_name || '.' || callee.name not in 
-                (
-                  'TOOLS.EQ', 'TOOLS.DEVISEN_UMRECHNEN', 'TOOLS.SOLLHABENFAKTOR','TOOLS.NICE_ERRM', 'TOOLS.APP', 'TOOLS.BETRAG_IN_CHF',
-                  'TOOLS.VERBINDE', 'VALOR_TYP.VALOR_TYP', 'TOOLS.INC',
-                  'PORTFOLIO_TYP.NICE_STRING', 'SE_AUFTRAGVARIANTE_TYP.ADD_AUFTRAGSBEWEGUNG',
-                 'SECEVENTS_AUFTRAG_ERSTELLEN.CREATE_SE_AUFTRAGBEWEGNG', 'SEGEVENTS.GET_SECEVPARAM_NUM', 'PORTFOLIO_TYP.PORTFOLIO_TYP',
-                 'SECEVENTS_RECHNE_AUFTRAGSDATEN.GET_TITEL_POSITIONS_DATEN','TOOLS.BETRAG_GERUNDET',
-                 'Z2X_ADMVALST.MAPPING_KAPITALANLAGE_TYP', 'RISIKOANALYSE.EQUAL', 'EINZELVALOREN.IST_EINZELVALOR',
-                 'FOND_VISIONEN.WHEN_NULL_FILL_UP_WITH_SPACES', 
-                 'VSMTREE.PL', 'RISIKOANALYSE.TEST',
-                 'BATLOAD2ADB.STATS')
-            and callee.name        not in ('NICE_STRING', 'ADD_C', 'FORMATIERTER_ERRORTEXT', 'CHECKMESSAGE_CONCAT', 'UNTERSCHIED_1_SBI_PF', 'RESET_ADB_STATUS')
-            and callee.name        not in ('TEST')
-            and callee.object_name not like 'SECEVENT%'
-            and callee.object_name not like 'SE_AUFTRAG%'
-            and callee.object_name not like 'BATLOD2ADB%'
-            and callee.object_name not like 'Z2X%'
-            and callee.object_name not in ('BATLOD2ADB', 'ZEIT_AKKUMULATOR_TYP', 'TAB_UTILS')
-
         ) loop
          
-           dot_call(call.object_name_caller, call.name_caller, call.object_name_callee, call.name_callee);
+           dot_call(call.object_name_caller || '.' || call.name_caller, call.object_name_callee || '.' || call.name_callee);
 
         end loop;
 
@@ -113,8 +98,13 @@ create or replace package body plscope as
               dbms_output.put_line('  node [shape=plaintext fontsize=11 fontname="Arial Narrow"];'); -- shape=record
 
         elsif lower(format) = 'gefx' then
-
-              null; -- TODO.
+        --    
+        --    Fileformat: see http://gexf.net/format/
+        --
+              
+              dbms_output.put_line('<?xml version="1.0" encoding="UTF-8"?>');
+              dbms_output.put_line('<gexf xmlns="http://www.gexf.net/1.2draft" version="1.2">');
+              dbms_output.put_line('<edges>');
 
         end if;
 
@@ -122,25 +112,39 @@ create or replace package body plscope as
         for r in (
 
 
-                      with c  (object_name_caller, name_caller, object_name_callee, name_callee, signature_caller, level_)  as (
-                                       select object_name_caller, name_caller, 
-                                              object_name_callee, name_callee,
+                      with c  (complete_name_caller, complete_name_callee, signature_caller, level_)  as (
+                      ------
+                      --      Recursive query:
+                      --           First "iteration" get the direct callers of the desired signature_ (parameter sig):
+                      --
+                                       select --object_name_caller, name_caller, 
+                                              --object_name_callee, name_callee,
+                                              complete_name_caller,
+                                              complete_name_callee,
                                               signature_caller,
-                                              0 level_
+                                              0 level_                                -- First iteration, "level" is 0
                                         from  plscope_call_v xx
                                        where  xx.signature_callee = sig
-                             UNION  ALL
-                                       select yy.object_name_caller, yy.name_caller, 
-                                              yy.object_name_callee, yy.name_callee,
+
+                              UNION  ALL
+                      --
+                      --      Itaration: 
+                      --            get the callers of all calls that had been identified
+                      --            by the prior iteration:
+                      --
+                                       select --yy.object_name_caller, yy.name_caller, 
+                                              --yy.object_name_callee, yy.name_callee,
+                                              yy.complete_name_caller,
+                                              yy.complete_name_callee,
                                               yy.signature_caller,
-                                              cc.level_  + 1 level_
+                                              cc.level_  + 1 level_                   -- Next iteration, increase level
                                         from  c cc join plscope_call_v yy on
                                               yy.signature_callee = cc.signature_caller
-                                      where   yy.name_caller not like 'TEST%'
+--                                    where   yy.name_caller not like 'TEST%'
                       )
                       --search depth first by c.object_name_caller set sorting
                       cycle signature_caller set is_cycle to 1 default 0
-                      select distinct object_name_caller, name_caller, object_name_callee, name_callee, signature_caller /*, is_cycle */ from c
+                      select distinct complete_name_caller, complete_name_callee, signature_caller /*, is_cycle */ from c
                       where 
                         is_cycle = 0 /*and
                         level_   < 5*/
@@ -148,7 +152,11 @@ create or replace package body plscope as
 
         )  loop
 
-           dot_call(r.object_name_caller, r.name_caller, r.object_name_callee, r.name_callee);
+           if     lower(format) = 'dot' then
+                  dot_call(r.complete_name_caller, r.complete_name_callee);
+           else
+                  gexf_call(r.complete_name_caller, r.complete_name_callee);
+           end if;
 
         end loop;
 
@@ -156,7 +164,8 @@ create or replace package body plscope as
         if    lower(format) = 'dot' then
               dbms_output.put_line('}');
         elsif lower(format) = 'gefx' then
-              null; -- TODO: finish me
+              dbms_output.put_line('</edges>');
+              dbms_output.put_line('</gexf>');
         end if;
 
     end print_upwards_graph;/*}*/
