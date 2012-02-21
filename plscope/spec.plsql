@@ -10,6 +10,10 @@ create or replace package plscope as
 
     procedure print_upwards_graph (sig signature_, format in varchar2);
 
+    --        Try to find a call path from a 'callable' to another 'callable',
+    --        possibly via more than one hops.
+    procedure find_call_path(sig_from signature_, sig_to signature_);
+
     procedure print_dot_graph;
     
     function  who_calls(sig_called signature_) return signature_t_;
