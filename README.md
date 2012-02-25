@@ -36,6 +36,11 @@ column-comments etc).  This package is used for the script
 /sqlpath/desc.sql
 
 
+# file_to_table
+A mechanism to make it possible to `select * from <filename>`
+within SQL*Plus
+
+
 # plscope
 A package that uses the `all_identifiers` view to trace
 function-dependencies in PL/SQL source code.
