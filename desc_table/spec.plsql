@@ -34,6 +34,7 @@ as
   table_does_not_exist exception;
   pragma exception_init(table_does_not_exist, -20010);
 
+--TODO: well, long is deprecated, isn't it?
   type check_t        is table of long;
 
   type col_t          is record (name varchar2(30), nullable boolean, datatype varchar2(106), checks check_t);
