@@ -4,7 +4,8 @@ declare
 --
 -- Parameter: name of constraint
 --
--- Currently: only PK, FK and check constraints supported.
+-- Currently: only PK, FK, unique and check constraints supported.
+---           NOT NULL constraints not yet supported.
 
    r_constraint    all_constraints%rowtype;
    r_constraint_pk all_constraints%rowtype;
@@ -45,9 +46,13 @@ begin
  
          end loop;
    -- }
-   elsif r_constraint.constraint_type = 'P' then -- {
+   elsif r_constraint.constraint_type in ('P', 'U') then -- {
 
-         dbms_output.put_line('  Primary Key constraint');
+         if r_constraint.constraint_type = 'P' then
+            dbms_output.put_line('  Primary Key constraint');
+         else
+            dbms_output.put_line('  Unique key constraint');
+         end if;
          dbms_output.new_line;
          dbms_output.put_line('     Table: ' || r_constraint.table_name);
          dbms_output.new_line;
