@@ -24,18 +24,10 @@ save c:\temp\file_to_table.sqlplus_buffer replace
 --     end loop;
 --   end;
 --
---
---
 -- --------------------------------------------------
 --
 -- Unfortunately, this script only works when called from within
 -- another script.
---
--- Es muss die SQL*Plus Variable "UTILITY_DIR" definiert werden, deren Wert auf
--- das Verzeichnis zeigt, worin dieses und ds file_to_table.bat File liegen.
--- 
--- Mehr auf dem Wiki unter http://wiki.prod.zkb.ch/wiki/AMDS:Utility_file_to_table.sql
---
 --
 -- Delete the .out file:
 $@del  c:\temp\file_to_table.out > nul
