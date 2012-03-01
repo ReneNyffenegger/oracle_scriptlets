@@ -4,7 +4,7 @@ declare
 --
 -- Parameter: name of constraint
 --
--- Currently: only PK and FK constraints supported.
+-- Currently: only PK, FK and check constraints supported.
 
    r_constraint    all_constraints%rowtype;
    r_constraint_pk all_constraints%rowtype;
