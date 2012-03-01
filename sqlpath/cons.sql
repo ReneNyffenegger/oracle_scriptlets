@@ -65,6 +65,37 @@ begin
 
          end loop;
  
+   -- }
+   elsif r_constraint.constraint_type = 'C' then -- {
+
+         dbms_output.put_line('  Check constraint');
+         dbms_output.new_line;
+         dbms_output.put_line('     Condition: ' || r_constraint.search_condition);
+         dbms_output.new_line;
+         dbms_output.put_line('     Table:     ' || r_constraint.table_name);
+         dbms_output.put     ('     Columns:   ');
+
+         for cols in (
+
+             select /* position, */  -- Seems to be null for check constraints...
+                    row_number() over (order by position) row_,
+                    column_name
+               from all_cons_columns
+              where constraint_name = r_constraint.constraint_name
+              order by position
+
+         ) loop
+           
+           if cols.row_ = 1 then
+              dbms_output.put_line(cols.column_name);
+           else
+              dbms_output.put_line('                ' || cols.column_name);
+           end if;
+
+         end loop;
+
+         dbms_output.new_line;
+ 
    end if; -- }
 
 end;
