@@ -16,7 +16,7 @@ begin
  
    select * into r_constraint from all_constraints where constraint_name = '&1';
  
-   if    r_constraint.constraint_type = 'R' then -- {
+   if    r_constraint.constraint_type =   'R'       then -- {
  
          select * into r_constraint_pk from all_constraints where constraint_name = r_constraint.r_constraint_name;
  
@@ -71,7 +71,7 @@ begin
          end loop;
  
    -- }
-   elsif r_constraint.constraint_type = 'C' then -- {
+   elsif r_constraint.constraint_type =   'C'       then -- {
 
          dbms_output.put_line('  Check constraint');
          dbms_output.new_line;
