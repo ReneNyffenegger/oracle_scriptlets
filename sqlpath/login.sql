@@ -7,3 +7,5 @@ set longchunksize 100000
 set tab              off
 
 define _editor=gvim
+
+alter session set nls_date_format = 'dd.mm.yyyy hh24:mi:ss';
