@@ -40,6 +40,11 @@ column-comments etc).  This package is used for the script
 A mechanism to make it possible to `select * from <filename>`
 within SQL*Plus
 
+#ODCITable
+
+A skeleton for the `ODCITable*` functions to select from
+dynamic tables (that is: tables with a varying number
+of columns).
 
 # plscope
 A package that uses the `all_identifiers` view to trace
