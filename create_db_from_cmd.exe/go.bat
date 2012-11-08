@@ -1,9 +1,16 @@
 @rem
+@rem        This script should create an Oracle Database.
+@rem        The values specified are quite minimal, on purpose.
+@rem        The Idea is to have a quick database at hand, when needed.
+@rem        The created database won't be good enough for a production
+@rem        database.
+@rem
+@rem
 @rem        Most probably, this script should be run as administrator
 @rem       (cf comment below regarding DIM-00014)
 @rem
 
-@     SET   ORACLE_HOME=c:\app\Rene\product\11.2.0\db_11_2
+@     SET   ORACLE_HOME=c:\Oracle\product\11.2.0\dbhome_1
 @     SET   ORACLE_SID=ORA_MANUALLY_CREATED
 @     SET   DB_NAME=DBMANUAL
 
@@ -23,6 +30,7 @@
 @rem        make sure, correct oradim, sqlplus etc will be invoked:
 @     SET   PATH=%ORACLE_HOME%\bin;%PATH%
 
+
 @rem 'file root directory'
 @rem  ----------------------------------------------------
 @rem  
@@ -30,7 +38,7 @@
 @rem        specify one single root for the files to
 @rem        be created by the database:
 
-@set        DB_FILE_ROOT=c:\%DB_NAME%_Files
+@set        DB_FILE_ROOT=c:\Oracle\%DB_NAME%_Files
 @rmdir      /q /s %DB_FILE_ROOT% > nul
 @mkdir      %DB_FILE_ROOT%
 
@@ -43,6 +51,7 @@
 @rem        The value of this environement variable will be
 @rem        used when the Initialization Parameter Files are
 @rem        created.
+@rem        Currently, only one control file is used.
 @rem  
 @     SET   CONTROL_FILES=(%DB_FILE_ROOT%\control_file_01.ctl)
 
@@ -82,10 +91,10 @@
 @rem        ----------------------------------------------------
 
 
-@echo       DB_NAME=%DB_NAME% > %PFILE%
-@echo       DB_BLOCK_SIZE=%DB_BLOCK_SIZE% >> %PFILE%
-@echo       CONTROL_FILES=%CONTROL_FILES% >> %PFILE%
-@echo       UNDO_TABLESPACE=UNDO_TS >> %PFILE%
+@echo       DB_NAME=%DB_NAME%>               %PFILE%
+@echo       DB_BLOCK_SIZE=%DB_BLOCK_SIZE%>>  %PFILE%
+@echo       CONTROL_FILES=%CONTROL_FILES%>>  %PFILE%
+@echo       UNDO_TABLESPACE=UNDO_TS>>        %PFILE%
 
 
 
@@ -133,7 +142,7 @@
 @rem
 @     SET  PWDFILE=%PWD_PATH%\%PWD_NAME%
 
-@     DEL  %PWDFILE% 2> null
+@     DEL  %PWDFILE% 2> nul
 
 @rem       Create password file using 'orapwd':
 @          orapwd file=%PWDFILE% password=%SYSDBA_PASSWORD%
@@ -150,10 +159,15 @@
 @echo   CREATE DATABASE %DB_NAME% >> %SCRIPT%
 @echo      USER SYS IDENTIFIED BY %SYSDBA_PASSWORD% >> %SCRIPT%
 @echo      USER SYSTEM IDENTIFIED BY %SYSTEM_PASSWORD% >> %SCRIPT%
-@echo      USER SYSTEM IDENTIFIED BY system_password >> %SCRIPT%
 @echo      LOGFILE GROUP 1 ('%DB_FILE_ROOT%\redo01a.log','%DB_FILE_ROOT%\redo01b.log') SIZE 100M BLOCKSIZE 512, >> %SCRIPT%
-@echo              GROUP 2 ('%DB_FILE_ROOT%\redo02a.log','%DB_FILE_ROOT%\redo02b.log') SIZE 100M BLOCKSIZE 512, >> %SCRIPT%
-@echo              GROUP 3 ('%DB_FILE_ROOT%\redo03a.log','%DB_FILE_ROOT%\redo03b.log') SIZE 100M BLOCKSIZE 512  >> %SCRIPT%
+@echo              GROUP 2 ('%DB_FILE_ROOT%\redo02a.log','%DB_FILE_ROOT%\redo02b.log') SIZE 100M BLOCKSIZE 512 >> %SCRIPT%
+
+@rem       currently, only two log file group. At least two are required to prevent
+@rem          ORA-01518: CREATE DATABASE must specify more than one log file
+@rem       Make sure to have the commas right when uncommenting the following line:
+@rem
+@rem @echo              GROUP 3 ('%DB_FILE_ROOT%\redo03a.log','%DB_FILE_ROOT%\redo03b.log') SIZE 100M BLOCKSIZE 512  >> %SCRIPT%
+
 @echo      -- MAXLOGFILES 5 >> %SCRIPT%
 @echo      MAXLOGMEMBERS 5 >> %SCRIPT%
 @echo      MAXLOGHISTORY 1 >> %SCRIPT%
