@@ -148,8 +148,8 @@
 @          orapwd file=%PWDFILE% password=%SYSDBA_PASSWORD%
 
 
-@rem        Create the 'SQL Script' that will create the database
-@rem        ----------------------------------------------------
+@rem       Create the 'SQL Script' that will create the database
+@rem       ----------------------------------------------------
 
 
 @set       SCRIPT=%TEMP_DIR%\create_db_script.sql
@@ -200,3 +200,32 @@
 @       sqlplus sys/%SYSDBA_PASSWORD% as sysdba @build_data_dictionary.sql
 
 @       sqlplus system/%SYSTEM_PASSWORD% @install_product_user_profile.sql
+
+@rem    -------------------------------------------
+@rem    Create listener service
+
+@       sc create OracleOraDb11g_home1TNSListener binPath= %ORACLE_HOME%\bin\tnslsnr.exe start= demand
+
+@rem    The listener service can be deleted with
+@rem        sc delete OracleOraDb11g_home1TNSListener
+@rem
+@rem    The service can be started with
+@rem        net start OracleOraDb11g_home1TNSListener
+@rem    and stopped with
+@rem        net stop OracleOraDb11g_home1TNSListener
+
+@rem    --------------------------------------------
+@rem    Create tnsadmin.ora file
+
+@echo ORA_MANUALLY_CREATED= >> %ORACLE_HOME%\NETWORK\ADMIN\tnsnames.ora
+@echo    (DESCRIPTION= >> %ORACLE_HOME%\NETWORK\ADMIN\tnsnames.ora
+@echo      (ADDRESS= >> %ORACLE_HOME%\NETWORK\ADMIN\tnsnames.ora
+@echo         (PROTOCOL=tcp) >> %ORACLE_HOME%\NETWORK\ADMIN\tnsnames.ora
+@echo         (HOST=localhost) >> %ORACLE_HOME%\NETWORK\ADMIN\tnsnames.ora
+@echo         (PORT=1521) >> %ORACLE_HOME%\NETWORK\ADMIN\tnsnames.ora
+@echo       ) >> %ORACLE_HOME%\NETWORK\ADMIN\tnsnames.ora
+@echo       (CONNECT_DATA= >> %ORACLE_HOME%\NETWORK\ADMIN\tnsnames.ora
+@echo          (SID=ORA_MANUALLY_CREATED) >> %ORACLE_HOME%\NETWORK\ADMIN\tnsnames.ora
+@echo          (GLOBAL_NAME=%DB_NAME%) >> %ORACLE_HOME%\NETWORK\ADMIN\tnsnames.ora
+@echo       ) >> %ORACLE_HOME%\NETWORK\ADMIN\tnsnames.ora
+@echo   ) >> %ORACLE_HOME%\NETWORK\ADMIN\tnsnames.ora
