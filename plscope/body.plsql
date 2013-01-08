@@ -1,3 +1,4 @@
+
 create or replace package body plscope as
 
     -- Used if it is necessary to prevent circles, for example
@@ -24,8 +25,8 @@ create or replace package body plscope as
         end if;
 
         insert into plscope_callable
-              (signature, object_name, name)
-        select signature, object_name, name
+              (signature, object_name, name, exclude)
+        select signature, object_name, name,       0
           from all_identifiers
          where type in ('PROCEDURE', 'FUNCTION') and
                usage = 'DEFINITION' and
@@ -98,7 +99,7 @@ create or replace package body plscope as
 
         if lower(format) = 'dot' then
 
-              dbms_output.put_line('digraph G {');
+              dbms_output.put_line('digraph G ' || chr(123));
               dbms_output.put_line(' graph [overlap=false size="11.7,16.5"];');
               dbms_output.put_line(' node [shape=plaintext fontsize=11 fontname="Arial Narrow"];'); -- shape=record
 
@@ -140,7 +141,8 @@ create or replace package body plscope as
                                               yy.signature_caller,
                                               cc.level_ + 1 level_ -- Next iteration, increase level
                                         from c cc join plscope_call_v yy on
-                                              yy.signature_callee = cc.signature_caller
+                                              yy.signature_callee = cc.signature_caller and
+                                              yy.exclude_caller   = 0
                       )
                       --search depth first by c.object_name_caller set sorting
                       cycle signature_caller set is_cycle to 1 default 0
@@ -162,7 +164,7 @@ create or replace package body plscope as
 
 
         if lower(format) = 'dot' then
-              dbms_output.put_line('}');
+              dbms_output.put_line(chr(125));
         elsif lower(format) = 'gefx' then
               dbms_output.put_line('</edges>');
               dbms_output.put_line('</gexf>');
@@ -179,7 +181,7 @@ create or replace package body plscope as
 
         if lower(format) = 'dot' then
 
-              dbms_output.put_line('digraph G {');
+              dbms_output.put_line('digraph G ' || chr(123));
               dbms_output.put_line(' graph [overlap=false size="11.7,16.5"];');
               dbms_output.put_line(' node [shape=plaintext fontsize=11 fontname="Arial Narrow"];'); -- shape=record
 
@@ -208,11 +210,12 @@ create or replace package body plscope as
                                               signature_callee,
                                               0 level_ -- First iteration, "level" is 0
                                         from plscope_call_v xx
-                                       where xx.signature_caller = sig
+                                       where xx.signature_caller = sig and
+                                             xx.exclude_callee   =   0
 
                               UNION ALL
                       --
-                      -- Itaration:
+                      -- Iteration:
                       -- get the callees of all calls that had been identified
                       -- by the prior iteration:
                       --
@@ -222,6 +225,8 @@ create or replace package body plscope as
                                               cc.level_ + 1 level_ -- Next iteration, increase level
                                         from c cc join plscope_call_v yy on
                                               yy.signature_caller = cc.signature_callee
+                                        where yy.exclude_caller = 0 and
+                                              yy.exclude_callee = 0
                       )
                       --search depth first by c.object_name_caller set sorting
                       cycle signature_callee set is_cycle to 1 default 0
@@ -243,7 +248,7 @@ create or replace package body plscope as
 
 
         if lower(format) = 'dot' then
-              dbms_output.put_line('}');
+              dbms_output.put_line(chr(125));
         elsif lower(format) = 'gefx' then
               dbms_output.put_line('</edges>');
               dbms_output.put_line('</gexf>');
@@ -251,7 +256,7 @@ create or replace package body plscope as
 
     end print_downwards_graph;/*}*/
 
-    function find_call_path_recurse(sig_from signature_, sig_to signature_, sigs_seen in out nocopy signatures_seen_t) return boolean/*{*/
+    function  find_call_path_recurse(sig_from signature_, sig_to signature_, sigs_seen in out nocopy signatures_seen_t) return boolean/*{*/
     is
 
       found_at_least_one boolean := false;
@@ -313,7 +318,7 @@ create or replace package body plscope as
     procedure find_call_path(sig_from signature_, sig_to signature_)/*{*/
     is
     -- Try to find a call path from a 'callable' to another 'callable',
-    -- possibly via more than one hops.
+    -- possibly via more than one hop.
 
               call_count number;
 
@@ -367,7 +372,7 @@ create or replace package body plscope as
 
     end find_definition ;/*}*/
 
-    function who_calls(sig_called signature_) return signature_t_ is/*{*/
+    function  who_calls(sig_called signature_) return signature_t_ is/*{*/
         caller_sig signature_;
         ret signature_t_ := signature_t_();
     begin
@@ -382,9 +387,13 @@ create or replace package body plscope as
 
            if caller_sig is not null then
 
-           ret.extend;
-           ret(ret.count) := caller_sig;
+              ret.extend;
+              ret(ret.count) := caller_sig;
 
+           else
+
+              dbms_output.put_line('find_definition failed for ' || caller.object_name || ' ' || caller.object_type || ' ' || caller.usage_context_id || ' ' || sig_called);
+   
            end if;
 
         end loop;
@@ -394,13 +403,14 @@ create or replace package body plscope as
     end who_calls;/*}*/
 
     procedure gather_identifiers is/*{*/
+              space_used_kb  number;
     begin
 
        execute immediate q'!alter session set plscope_settings='IDENTIFIERS:ALL'!';
 
        for o in (
           select object_type, object_name from user_objects
-           where object_type in ('PACKAGE', 'TYPE', 'FUNCTION', 'PROCEDURE')
+           where object_type in ('PACKAGE', 'TYPE', 'FUNCTION', 'PROCEDURE' /*, 'TRIGGER' */)
        ) loop
 
          begin
@@ -417,4 +427,3 @@ create or replace package body plscope as
 
 end plscope;
 /
-
