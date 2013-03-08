@@ -16,8 +16,8 @@ create or replace package plscope as
     procedure find_call_path(sig_from signature_, sig_to signature_);
 
     procedure print_dot_graph;
-    
-    function who_calls(sig_called signature_) return signature_t_;
+
+    function  who_calls(sig_called signature_) return signature_t_;
 
     procedure gather_identifiers;
 

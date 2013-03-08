@@ -1,3 +1,4 @@
+
 create or replace package body plscope as
 
     -- Used if it is necessary to prevent circles, for example
@@ -214,7 +215,7 @@ create or replace package body plscope as
 
                               UNION ALL
                       --
-                      -- Itaration:
+                      -- Iteration:
                       -- get the callees of all calls that had been identified
                       -- by the prior iteration:
                       --
@@ -317,7 +318,7 @@ create or replace package body plscope as
     procedure find_call_path(sig_from signature_, sig_to signature_)/*{*/
     is
     -- Try to find a call path from a 'callable' to another 'callable',
-    -- possibly via more than one hops.
+    -- possibly via more than one hop.
 
               call_count number;
 
@@ -386,9 +387,13 @@ create or replace package body plscope as
 
            if caller_sig is not null then
 
-           ret.extend;
-           ret(ret.count) := caller_sig;
+              ret.extend;
+              ret(ret.count) := caller_sig;
 
+           else
+
+              dbms_output.put_line('find_definition failed for ' || caller.object_name || ' ' || caller.object_type || ' ' || caller.usage_context_id || ' ' || sig_called);
+   
            end if;
 
         end loop;
@@ -398,13 +403,14 @@ create or replace package body plscope as
     end who_calls;/*}*/
 
     procedure gather_identifiers is/*{*/
+              space_used_kb  number;
     begin
 
        execute immediate q'!alter session set plscope_settings='IDENTIFIERS:ALL'!';
 
        for o in (
           select object_type, object_name from user_objects
-           where object_type in ('PACKAGE', 'TYPE', 'FUNCTION', 'PROCEDURE')
+           where object_type in ('PACKAGE', 'TYPE', 'FUNCTION', 'PROCEDURE' /*, 'TRIGGER' */)
        ) loop
 
          begin
