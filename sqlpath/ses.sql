@@ -11,7 +11,10 @@ with ses_sql as (
     sql.sql_text,
     sql.piece,
     (sysdate - ses.sql_exec_start) * 60 * 60 * 24 sql_running_since,
-    case when ses.saddr = lag(ses.saddr) over (order by ses.saddr, sql.piece) then 0 else 1 end new_session
+    case when ses.saddr = lag(ses.saddr) over (order by ses.saddr, sql.piece) then 0 else 1 end new_session,
+ -- cpu_time,
+ --sql.address,
+ --sql.hash_value
   from
     v$session ses left join
     v$sqltext sql on ses.sql_address = sql.address and ses.sql_hash_value = sql.hash_value
