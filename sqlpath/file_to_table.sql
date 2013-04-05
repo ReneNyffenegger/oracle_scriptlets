@@ -25,6 +25,9 @@ save c:\temp\file_to_table.sqlplus_buffer replace
 --   end;
 --
 -- --------------------------------------------------
+-- ../file_to_table/tmp_file_to_table.sql
+-- installs the necessary temp-table.
+-- --------------------------------------------------
 --
 -- Unfortunately, this script only works when called from within
 -- another script.
