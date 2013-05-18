@@ -5,6 +5,7 @@ set pages           5000
 set long          100000
 set longchunksize 100000
 set tab              off
+set sqlblanklines     on
 
 define _editor=gvim
 
