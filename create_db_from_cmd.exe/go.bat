@@ -27,8 +27,10 @@
 @rem  SET   Where will 'create database' statement go?
 @     SET   TEMP_DIR=c:\temp
 
-@rem        make sure, correct oradim, sqlplus etc will be invoked:
-@     SET   PATH=%ORACLE_HOME%\bin;%PATH%
+@rem        Make sure, correct oradim, sqlplus etc will be invoked.
+@rem        The variable might already have been set by
+@rem        Oracle's installer.
+@rem  SET   PATH=%ORACLE_HOME%\bin;%PATH%
 
 
 @rem 'file root directory'
@@ -38,7 +40,7 @@
 @rem        specify one single root for the files to
 @rem        be created by the database:
 
-@set        DB_FILE_ROOT=c:\Oracle\%DB_NAME%_Files
+@set        DB_FILE_ROOT=c:\tools\Oracle\%DB_NAME%_Files
 @rmdir      /q /s %DB_FILE_ROOT% > nul
 @mkdir      %DB_FILE_ROOT%
 
@@ -217,15 +219,20 @@
 @rem    --------------------------------------------
 @rem    Create tnsadmin.ora file
 
-@echo ORA_MANUALLY_CREATED= >> %ORACLE_HOME%\NETWORK\ADMIN\tnsnames.ora
+@echo %DB_NAME%= >> %ORACLE_HOME%\NETWORK\ADMIN\tnsnames.ora
 @echo    (DESCRIPTION= >> %ORACLE_HOME%\NETWORK\ADMIN\tnsnames.ora
 @echo      (ADDRESS= >> %ORACLE_HOME%\NETWORK\ADMIN\tnsnames.ora
 @echo         (PROTOCOL=tcp) >> %ORACLE_HOME%\NETWORK\ADMIN\tnsnames.ora
 @echo         (HOST=localhost) >> %ORACLE_HOME%\NETWORK\ADMIN\tnsnames.ora
 @echo         (PORT=1521) >> %ORACLE_HOME%\NETWORK\ADMIN\tnsnames.ora
-@echo       ) >> %ORACLE_HOME%\NETWORK\ADMIN\tnsnames.ora
-@echo       (CONNECT_DATA= >> %ORACLE_HOME%\NETWORK\ADMIN\tnsnames.ora
-@echo          (SID=ORA_MANUALLY_CREATED) >> %ORACLE_HOME%\NETWORK\ADMIN\tnsnames.ora
-@echo          (GLOBAL_NAME=%DB_NAME%) >> %ORACLE_HOME%\NETWORK\ADMIN\tnsnames.ora
-@echo       ) >> %ORACLE_HOME%\NETWORK\ADMIN\tnsnames.ora
+@echo      ) >> %ORACLE_HOME%\NETWORK\ADMIN\tnsnames.ora
+@echo      (CONNECT_DATA= >> %ORACLE_HOME%\NETWORK\ADMIN\tnsnames.ora
+@echo         (SID=%ORACLE_SID%) >> %ORACLE_HOME%\NETWORK\ADMIN\tnsnames.ora
+@echo         (GLOBAL_NAME=%DB_NAME%) >> %ORACLE_HOME%\NETWORK\ADMIN\tnsnames.ora
+@echo      ) >> %ORACLE_HOME%\NETWORK\ADMIN\tnsnames.ora
 @echo   ) >> %ORACLE_HOME%\NETWORK\ADMIN\tnsnames.ora
+
+@rem    --------------------------------------------
+@rem    Create listener.ora file
+
+@echo   listener=(ADDRESS=(PROTOCOL=tcp)(HOST=localhost)(PORT=1521)) >> %ORACLE_HOME%\NETWORK\ADMIN\listener.ora
