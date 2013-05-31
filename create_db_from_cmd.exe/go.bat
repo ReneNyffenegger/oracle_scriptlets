@@ -97,6 +97,10 @@
 @echo       DB_BLOCK_SIZE=%DB_BLOCK_SIZE%>>  %PFILE%
 @echo       CONTROL_FILES=%CONTROL_FILES%>>  %PFILE%
 @echo       UNDO_TABLESPACE=UNDO_TS>>        %PFILE%
+@rem
+@rem  TODO: For the following parameter, see http://dba.stackexchange.com/questions/8434
+@rem
+@rem        local_listener='(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))' >> %PFILE%
 
 
 
