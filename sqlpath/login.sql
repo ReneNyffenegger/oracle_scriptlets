@@ -5,10 +5,12 @@ set pages           5000
 set long          100000
 set longchunksize 100000
 set tab              off
+set sqlblanklines     on
 
 define _editor=gvim
 
 alter session set nls_date_format = 'dd.mm.yyyy hh24:mi:ss';
+alter session set nls_language    = 'english';
 
 --  SQL Prompt {
 set termout off
@@ -21,3 +23,5 @@ set sqlprompt '&sqlprompt> '
 undefine sqlprompt
 set termout on
 -- }
+
+set editfile c:\temp\sqlplus.sql

@@ -1,5 +1,4 @@
-__
--- Searches for SQL statements in v$sql
+-- Searches for similar sql statements in v$sql
 -- that look similar and could potentially make
 -- use of bind variables.
 --
@@ -36,7 +35,5 @@ group by
      , '(=|<|>|\s+)(-?\d+\.\d+)', '\1#') -- 44.4    -> #
      , '(=|<|>|\s+)(-?\.\d+)'   , '\1#') --   .49   -> #
      , '(=|<|>|\s+)(-?\d+)'     , '\1#') --   22    -> #
-having
-  count(*) > 10
 order by 
   count(*) desc;
