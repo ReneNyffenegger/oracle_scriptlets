@@ -339,7 +339,7 @@ create or replace package body plscope as
 
     procedure find_definition (/*{*/
        -- In:
-       obj_ in varchar2, obj_typ_ in varchar2, usage_id_ in number,
+       obj_ in varchar2, owner_ in varchar2, obj_typ_ in varchar2, usage_id_ in number,
        --- Out:
        sig out signature_/*, nam_ out varchar2*/
      )
@@ -358,8 +358,9 @@ create or replace package body plscope as
              select signature, usage /*, name*/, type , usage_context_id
                into sig , wait_for_definition/*, nam_*/, wait_for_type , usage_id_l
               from
-                all_identifiers where usage_id = usage_id_l and
-                                      object_name = obj_ and
+                all_identifiers where usage_id    = usage_id_l and
+                                      object_name = obj_       and
+                                      owner       = owner_     and
                                       object_type = obj_typ_;
 
        end loop;
@@ -378,12 +379,19 @@ create or replace package body plscope as
     begin
 
         for caller in (
-            select object_name, object_type, usage_context_id from all_identifiers
+            select object_name, owner, object_type, usage_context_id from all_identifiers
              where signature = sig_called and
                    usage ='CALL'
         ) loop
 
-           find_definition(caller.object_name, caller.object_type, caller.usage_context_id, caller_sig/*, caller_nam*/);
+           find_definition(
+             -- In: 
+                caller.object_name, 
+                caller.owner,
+                caller.object_type, 
+                caller.usage_context_id, 
+             -- Out:
+                caller_sig/*, caller_nam*/);
 
            if caller_sig is not null then
 
