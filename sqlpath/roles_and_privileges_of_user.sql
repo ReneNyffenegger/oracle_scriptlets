@@ -1,6 +1,8 @@
 --
 --  http://www.adp-gmbh.ch/ora/misc/recursively_list_privilege.html
 --
+--  Compare with «object_privileges.sql» and «roles_and_users_of_system_privilege.sql»
+--
 select
   lpad(' ', 2*level) || granted_role "User, his roles and privileges"
 from

@@ -1,14 +1,7 @@
---
---    This script «ends» (hence the 'e') an
---    SQL snap. The snap is started with
---    sql_snap_t_s.sql.
---
---   These two script offer the same functionality
---   as sqlsnaps.sql/sqlsnape.sql, but without the
---   ../sql_snap package.
-
 select 
-  rpad(sql_text, 130) sql_text,
+  rpad(sql_text, 100) sql_text,
+  address,
+  hash_value,
   executions,
   elapsed_time,
   cpu_time,
@@ -17,6 +10,8 @@ select
 from (
   select
     e.sql_text,
+    e.address,
+    e.hash_value,
     e.executions             - nvl(s.executions  , 0)                            executions  ,
     to_char( (e.elapsed_time - nvl(s.elapsed_time, 0)) / 1000000, '9999990.00')  elapsed_time,
     to_char( (e.cpu_time     - nvl(s.cpu_time    , 0)) / 1000000, '9999990.00')  cpu_time    ,

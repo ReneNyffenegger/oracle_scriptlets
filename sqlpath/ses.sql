@@ -27,4 +27,8 @@ select
   sql_text,
   case when new_session = 1 then sql_running_since end sql_run
 from 
-  ses_sql;
+  ses_sql
+order by
+  logon_time,
+  sid,
+  piece;
