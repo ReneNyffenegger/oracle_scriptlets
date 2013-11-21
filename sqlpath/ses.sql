@@ -18,6 +18,8 @@ with ses_sql as (
   from
     v$session ses left join
     v$sqltext sql on ses.sql_address = sql.address and ses.sql_hash_value = sql.hash_value
+  where
+    ses.sid != sys_context('USERENV','SID')
 )
 select
   case when new_session = 1 then sid               end sid,
