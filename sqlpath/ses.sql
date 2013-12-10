@@ -8,13 +8,11 @@ with ses_sql as (
     ses.serial#,
     ses.username,
     ses.osuser,
+    ses.logon_time,
     sql.sql_text,
     sql.piece,
     (sysdate - ses.sql_exec_start) * 60 * 60 * 24 sql_running_since,
-    case when ses.saddr = lag(ses.saddr) over (order by ses.saddr, sql.piece) then 0 else 1 end new_session,
- -- cpu_time,
- --sql.address,
- --sql.hash_value
+    case when ses.sid = lag(ses.sid) over (order by ses.sid, sql.piece) then 0 else 1 end new_session
   from
     v$session ses left join
     v$sqltext sql on ses.sql_address = sql.address and ses.sql_hash_value = sql.hash_value
@@ -22,10 +20,11 @@ with ses_sql as (
     ses.sid != sys_context('USERENV','SID')
 )
 select
-  case when new_session = 1 then sid               end sid,
+  case when new_session = 1 then sid               end sid_,
   case when new_session = 1 then serial#           end serial#,
   case when new_session = 1 then username          end username,
   case when new_session = 1 then osuser            end osuser,
+  case when new_session = 1 then logon_time        end logon_time_,
   sql_text,
   case when new_session = 1 then sql_running_since end sql_run
 from 
