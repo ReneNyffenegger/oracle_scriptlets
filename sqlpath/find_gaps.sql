@@ -12,7 +12,7 @@ select a+1        "From/Start Value",
 select &&column                                            a,
        lag (&&column) over (order by &&column) lag_,
        lead(&&column) over (order by &&column) lead_,
-      &&column - lead(&&column) over (order by &&column) count_
+       &&column - lead(&&column) over (order by &&column) count_
   from &&table
  order by &&column - lead(&&column) over (order by &&column)
 )
