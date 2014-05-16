@@ -5,8 +5,9 @@
 --     numeric, non fractional values (integers), possibly 
 --     created by sequences.
 --
-select a+1   "From/Start Value", 
-       lead_ "To (Value)"
+select a+1        "From/Start Value", 
+       lead_      "To (Value)",
+       lead_ - a  "Size"
   from (
 select &&column                                            a,
        lag (&&column) over (order by &&column) lag_,
