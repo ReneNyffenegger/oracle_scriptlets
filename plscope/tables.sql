@@ -6,10 +6,10 @@
 --   Then call 'plscope.fill_call'.
 --
 
-drop view plscope_ref_v;
-drop view plscope_call_v;
-drop table plscope_call;
-drop table plscope_callable;
+drop view  plscope_ref_v;
+drop view  plscope_call_v;
+drop table plscope_call      purge;
+drop table plscope_callable  purge;
 
 
 create table plscope_callable (
