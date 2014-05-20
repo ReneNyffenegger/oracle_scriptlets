@@ -411,7 +411,6 @@ create or replace package body plscope as
     end who_calls;/*}*/
 
     procedure gather_identifiers is/*{*/
-              space_used_kb  number;
     begin
 
        execute immediate q'!alter session set plscope_settings='IDENTIFIERS:ALL'!';
