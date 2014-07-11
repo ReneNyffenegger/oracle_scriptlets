@@ -38,6 +38,9 @@ q'{
 
 begin
 
+--Remove possible trailing semicolon «;» in sqlFile.
+  sql_stmt := regexp_replace(sql_stmt, ';\s*$', '');
+
   cur := dbms_sql.open_cursor;
   dbms_sql.parse(cur, sql_stmt, dbms_sql.native);
   dbms_sql.describe_columns(cur, cntCols, cols);
