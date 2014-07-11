@@ -1,10 +1,14 @@
 --
+--  SQL> @to_csv file_with_sqlstament.sql c:\temp\result.csv
+--
 --     Executue an SQL-query (select statement) that is stored in 
 --     the file with the name passed as the first argument (sqlFile)
 --     and store the result as csv (with ; as seperators)
 --
 --     Additionally, create a header line with the column names of the
 --     result set.
+--
+--     Needs ./spool.sql and ./spool_off.sql
 --
 --     TODO: Currently, the SQL statement must not have an ending /
 --
