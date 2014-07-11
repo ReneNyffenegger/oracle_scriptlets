@@ -6,7 +6,7 @@
 --     Additionally, create a header line with the column names of the
 --     result set.
 --
---     TODO: Currentyl, the SQL statement must not have an ending ; or /
+--     TODO: Currently, the SQL statement must not have an ending /
 --
 define sqlFile=&1
 define csvFile=&2
