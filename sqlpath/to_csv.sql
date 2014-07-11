@@ -8,6 +8,11 @@
 --
 --     TODO: Currently, the SQL statement must not have an ending /
 --
+--     See also
+--       o  https://github.com/ReneNyffenegger/development_misc/blob/master/vba/excel/CSV_import.bas         and
+--       o  https://github.com/ReneNyffenegger/development_misc/blob/master/vba/excel/some_data_import.bas
+--     for a solution on how to import csv Data into excel.
+--
 define sqlFile=&1
 define csvFile=&2
 
