@@ -1,8 +1,7 @@
 '
-'
-'
 '      See also
-'          o https://github.com/ReneNyffenegger/development_misc/blob/master/vba/excel/some_data_import.bas
+'          o https://github.com/ReneNyffenegger/development_misc/blob/master/vba/excel/some_data_import.bas    and
+'          o https://github.com/ReneNyffenegger/development_misc/blob/master/vba/excel/CSV_import.bas
 '
 option explicit
 
