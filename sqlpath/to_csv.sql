@@ -13,7 +13,7 @@ define csvFile=&2
 
 set   trimspool on
 set   lines 5000
-spool &csvFile
+@spool &csvFile
 
 declare
 
@@ -74,4 +74,4 @@ begin
 end;
 /
 
-spool off
+@spool_off
