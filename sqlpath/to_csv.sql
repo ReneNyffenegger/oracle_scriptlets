@@ -1,8 +1,8 @@
 --
---  SQL> @to_csv file_with_sqlstament.sql c:\temp\result.csv
+--  SQL> @to_csv file_with_sqlstatement.sql c:\temp\result.csv
 --
 --     Executue an SQL-query (select statement) that is stored in 
---     the file with the name passed as the first argument (sqlFile)
+--     the file with the name passed as the first argument (file_with_sqlstatement.sql)
 --     and store the result as csv (with ; as seperators)
 --
 --     Additionally, create a header line with the column names of the
