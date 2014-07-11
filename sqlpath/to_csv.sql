@@ -20,8 +20,6 @@
 define sqlFile=&1
 define csvFile=&2
 
-set   trimspool on
-set   lines 5000
 @spool &csvFile
 
 declare
