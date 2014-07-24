@@ -7,20 +7,48 @@ declare
 -- Currently: only PK, FK, unique and check constraints supported.
 ---           NOT NULL constraints not yet supported.
 
-   r_constraint    all_constraints%rowtype;
-   r_constraint_pk all_constraints%rowtype;
+   r_constraint    dba_constraints%rowtype;
+   r_constraint_pk dba_constraints%rowtype;
+   r_index         dba_indexes%rowtype;
+
+   owner_           varchar2(30);
+   constraint_name_ varchar2(30);
+   dot_pos          number;
+
  
 begin
 
    dbms_output.new_line;
+
+   dot_pos  := instr('&1', '.');
+
+   if dot_pos > 0 then
+      owner_           := upper(substr('&1', 1, dot_pos-1));
+      constraint_name_ := upper(substr('&1', dot_pos + 1 ));
+   else
+      constraint_name_ := upper('&1');
+   end if;
  
+   dbms_output.put_line('Owner:  ' || owner_);
+   dbms_output.put_line('constraint name  ' || constraint_name_ );
+
    begin
-     select * into r_constraint from all_constraints where constraint_name = '&1';
+     select * into r_constraint from dba_constraints 
+      where 
+        constraint_name = constraint_name_ and
+        nvl(owner_, owner) = owner;
+
+dbms_output.put_line('type: ' || r_constraint.constraint_type);
+
    exception when no_data_found then
 
      -- Maybe it's a unique constraint in an index-disguise...
 
-     select * into r_index from all_indexes where index_name = '&1' and uniqueness = 'UNIQUE';
+     select * into r_index from dba_indexes 
+      where 
+        index_name         = constraint_name_   and
+        nvl(owner_, owner) = owner              and 
+        uniqueness         ='UNIQUE';
 
      dbms_output.put_line(' Unique key constraint [defined as index]');
      dbms_output.new_line;
@@ -30,9 +58,12 @@ begin
      for cols in (
             
             select column_name
-              from all_ind_columns
-             where index_name = r_index.index_name
+              from dba_ind_columns
+             where 
+               index_name               = constraint_name_    and
+               nvl(owner_, index_owner) = index_owner
              order by column_position
+
      ) loop
 
         dbms_output.put_line(' ' || cols.column_name);
@@ -43,10 +74,14 @@ begin
  
    if    r_constraint.constraint_type =   'R'       then -- {
  
-         select * into r_constraint_pk from all_constraints where constraint_name = r_constraint.r_constraint_name;
+         select * into r_constraint_pk from dba_constraints 
+           where 
+             constraint_name    = r_constraint.r_constraint_name and
+             owner              = r_constraint.r_owner;
  
          dbms_output.put_line('  Foreign Key constraint');
          dbms_output.new_line;
+         dbms_output.put_line('    ' || rpad(r_constraint.owner     , 30) || '    ' || r_constraint_pk.owner);
          dbms_output.put_line('    ' || rpad(r_constraint.table_name, 30) || ' -> ' || r_constraint_pk.table_name);
          dbms_output.put_line('    ' || rpad('-', 30, '-')                || '    ' || rpad('-', 30, '-'));
  
@@ -56,8 +91,8 @@ begin
                fk_col.column_name  column_name_fk,
                pk_col.column_name  column_name_pk
              from
-               all_cons_columns   fk_col,
-               all_cons_columns   pk_col
+               dba_cons_columns   fk_col,
+               dba_cons_columns   pk_col
              where
                fk_col.constraint_name = r_constraint   .constraint_name and
                pk_col.constraint_name = r_constraint_pk.constraint_name and
@@ -85,8 +120,10 @@ begin
          for cols in (
 
              select column_name
-               from all_cons_columns
-              where constraint_name = r_constraint.constraint_name
+               from dba_cons_columns
+              where 
+                constraint_name = r_constraint.constraint_name and
+                nvl(owner_, owner) = owner
               order by position
 
          ) loop
@@ -110,8 +147,10 @@ begin
              select /* position, */  -- Seems to be null for check constraints...
                     row_number() over (order by position) row_,
                     column_name
-               from all_cons_columns
-              where constraint_name = r_constraint.constraint_name
+               from dba_cons_columns
+              where 
+                constraint_name = r_constraint.constraint_name and
+                owner           = r_constraint.owner
               order by position
 
          ) loop
