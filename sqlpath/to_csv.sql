@@ -55,8 +55,8 @@ begin
   for col in 1 .. cntCols loop
 
       if selected_columns is not null then 
-         selected_columns := selected_columns || '||'';''||';
-         header := header || ';';
+         selected_columns := selected_columns || '||'',''||';
+         header := header || ',';
       end if;
 
       header           := header                  || cols(col).col_name;
