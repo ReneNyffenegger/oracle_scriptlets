@@ -2,6 +2,10 @@
 --
 --                   Display sessions along with their currently running sql statement.
 --
+--                   This statement may return multiple records per session because
+--                   v$sqltext splits the sql text into pieces. Use -> ses_wide.sql
+--                   to display one record per session.
+--
 with ses_sql as (
   select 
     ses.sid,
