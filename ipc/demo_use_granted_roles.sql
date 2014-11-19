@@ -1,18 +1,13 @@
 connect / as sysdba
 
-
 create user ipc_user identified by ipc_user;
 
 grant
   create procedure,
   create session,
-  create job,
-  select_catalog_role  -- can select from v$...
+  select_catalog_role
 to
   ipc_user;
-
-grant execute on dbms_job  to ipc_user;
-grant execute on dbms_pipe to ipc_user;
 
 -- Don't directly grant:
 --
@@ -28,9 +23,7 @@ select count(*) from v$process;
 
 
 create or replace function tq84_proc_memory return varchar2 as
-
    v_result varchar2(200);
-
 begin
 
     select
@@ -43,7 +36,8 @@ begin
     from
       v$process
     where
-      addr = (select paddr from v$session where sid = sys_context('USERENV','SID'));
+      addr = (select paddr from v$session where sid = 
+      sys_context('USERENV','SID'));
 
     return v_result;
 
@@ -55,40 +49,48 @@ end tq84_proc_memory;
 show errors
 -- LINE/COL ERROR
 -- -------- -----------------------------------------------------------------
--- 7/5      PL/SQL: SQL Statement ignored
--- 17/33    PL/SQL: ORA-00942: table or view does not exist
+-- 5/5      PL/SQL: SQL Statement ignored
+-- 15/33    PL/SQL: ORA-00942: table or view does not exist
 
 -- It would compile, if grants on v$* were directly given:
 --    grant select on v_$process to ipc_user /
 --    grant select on v_$session to ipc_user.
 
+connect / as sysdba
+
+grant execute on dbms_job  to ipc_user;
+grant execute on dbms_pipe to ipc_user;
+grant create job to ipc_user;
+
+connect ipc_user/ipc_user
 
 @IPC.pks
 @IPC.pkb
 
 create or replace function tq84_proc_memory return varchar2 as
 
-    v_proc varchar2(32000);
+  v_proc varchar2(32000);
 
 begin
 
-    v_proc := q'!
-     declare
-        x varchar2(200);
-     begin
-      select
-               'Used: '     || round(pga_used_mem    /1024/1024)||', '||
-               'Alloc: '    || round(pga_alloc_mem   /1024/1024)||', '||
-               'Freeable: ' || round(pga_freeable_mem/1024/1024)||', '||
-               'PGA Max: '  || round(pga_max_mem     /1024/1024)
-        into  
-              x
-        from
-               v$process
-        where
-              addr = (select paddr from v$session where sid = !' || sys_context('USERENV','SID') || q'!);
-        :result := x;
-    end;!';
+  v_proc := q'!
+   declare
+     x varchar2(200);
+   begin
+    select
+     'Used: '     || round(pga_used_mem    /1048576)||', '||
+     'Alloc: '    || round(pga_alloc_mem   /1048576)||', '||
+     'Freeable: ' || round(pga_freeable_mem/1048576)||', '||
+     'PGA Max: '  || round(pga_max_mem     /1048576)
+    into  
+      x
+    from
+      v$process
+    where
+     addr = (select paddr from v$session where sid = !' || 
+             sys_context('USERENV','SID') || q'!);
+    :result := x;
+  end;!';
 
     return ipc.exec_plsql_in_other_session(v_proc);
 
