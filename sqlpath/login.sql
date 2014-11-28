@@ -6,6 +6,7 @@ set long          100000
 set longchunksize 100000
 set tab              off
 set sqlblanklines     on
+set exitcommit       off
 
 define _editor=gvim
 
