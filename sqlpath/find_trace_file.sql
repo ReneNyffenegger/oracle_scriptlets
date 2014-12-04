@@ -1,4 +1,7 @@
 -- http://www.adp-gmbh.ch/ora/misc/find_trace_file.html
+--
+-- Compare with -> tracefile.sql
+--
 select 
   u_dump.value   || '/'     || 
   db_name.value  || '_ora_' || 
