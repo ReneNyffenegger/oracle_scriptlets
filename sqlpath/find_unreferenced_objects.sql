@@ -10,7 +10,7 @@
     dba_objects
   where
     owner        = '&1' and
-    object_type not in ('INDEX', 'TRIGGER', 'JOB')
+    object_type not in ('INDEX', 'INDEX PARTITION', 'TRIGGER', 'JOB')
 minus
   select
     referenced_owner,
