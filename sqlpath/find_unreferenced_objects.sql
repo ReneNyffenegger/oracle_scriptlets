@@ -20,9 +20,5 @@ select
   where type not in ('SYNONYM')
 ) join
 user_objects using (object_name)
-where 
-   object_type not in ('VIEW', 'TABLE') and
-   object_type != 'SEQUENCE' and
-   object_type = 'TYPE'
 order by object_name
 ;
