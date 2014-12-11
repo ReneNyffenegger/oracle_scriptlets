@@ -3,6 +3,8 @@
 --
 --  Uses -> ts_.sql
 --
+--  For datafiles see -> files.sql
+--
 set verify off
 
 prompt
