@@ -1,3 +1,8 @@
+--
+--      Some basic information about the database from v$database.
+--
+--      See -> os.sql for column PLATFORM_NAME
+--
 select
 -- dbid,
    name,
