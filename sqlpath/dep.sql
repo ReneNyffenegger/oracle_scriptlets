@@ -1,6 +1,8 @@
 --
 --   Find object dependencies, report them in a «hierarchical» layout.
 --
+--   See also -> find_unreferenced_objects.sql and -> ref.sql
+--
 with obj (name, owner, type, level_) as (
    select 
      upper('&object_name'),
