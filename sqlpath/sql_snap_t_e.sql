@@ -1,7 +1,16 @@
+--
+--    Show the difference to a started "SQL Snap". (The _e stands for "end")
+--
+--    Use sql_snap_t_s.sql to start such a snap
+--
+--    Use sqlid.sql to query the complete SQL test statement.
+
+
 select 
   rpad(sql_text, 100) sql_text,
-  address,
-  hash_value,
+--address,
+--hash_value,
+  sql_id,
   executions,
   elapsed_time,
   cpu_time,
@@ -10,8 +19,9 @@ select
 from (
   select
     e.sql_text,
-    e.address,
-    e.hash_value,
+--  e.address,
+--  e.hash_value,
+    e.sql_id,
     e.executions             - nvl(s.executions  , 0)                            executions  ,
     to_char( (e.elapsed_time - nvl(s.elapsed_time, 0)) / 1000000, '9999990.00')  elapsed_time,
     to_char( (e.cpu_time     - nvl(s.cpu_time    , 0)) / 1000000, '9999990.00')  cpu_time    ,
