@@ -1,4 +1,3 @@
-
 create or replace package body plscope as
 
     -- Used if it is necessary to prevent circles, for example
@@ -28,14 +27,15 @@ create or replace package body plscope as
               (signature, object_name, name, exclude)
         select signature, object_name, name,       0
           from all_identifiers
-         where type in ('PROCEDURE', 'FUNCTION') and
-               usage = 'DEFINITION' and
-               owner = owner_;
+         where ( ( type in ('PROCEDURE', 'FUNCTION'                ) and usage = 'DEFINITION' )  or
+                 ( type in ('CURSOR'   , 'PACKAGE', 'PACKAGE BODY' ) and usage = 'DECLARATION') 
+               ) 
+               and owner = owner_;
 
     end fill_callable;/*}*/
 
     procedure fill_call(owner_ in varchar2, delete_existing in boolean) is/*{*/
-        callees signature_t_;
+        callers signature_t_;
     begin
 
         if delete_existing then
@@ -46,14 +46,15 @@ create or replace package body plscope as
 
         for callable in (select signature from plscope_callable /* TODO: where owner = owner_ */) loop
 
-            callees := who_calls(callable.signature);
+            callers := who_calls(callable.signature);
 
-            for i in 1 .. callees.count loop
+            for i in 1 .. callers.count loop
 
                 begin
-                insert into plscope_call values (callees(i), callable.signature);
+                insert into plscope_call (caller, callee) values (callers(i), callable.signature);
                 exception when others then
-                raise_application_error(-20801, callable.signature || ' ' || callees(i));
+--              raise_application_error(-20801, sqlerrm || ': ' ||  callers(i) || ' ' || callable.signature);
+                dbms_output.put_line           (sqlerrm || ': ' ||  callers(i) || ' ' || callable.signature);
                 end;
 
             end loop;
@@ -353,7 +354,7 @@ create or replace package body plscope as
 
        usage_id_l := usage_id_;
 
-       while wait_for_definition != 'DEFINITION' or wait_for_type not in ('FUNCTION', 'PROCEDURE') loop
+       while usage_id_l != 0 and (wait_for_definition != 'DEFINITION' or wait_for_type not in ('FUNCTION', 'PROCEDURE', 'CURSOR', 'PACKAGE', 'PACKAGE BODY')) loop
 
              select signature, usage /*, name*/, type , usage_context_id
                into sig , wait_for_definition/*, nam_*/, wait_for_type , usage_id_l
@@ -367,7 +368,8 @@ create or replace package body plscope as
 
        exception when others then
 
-        dbms_output.put_line('?: ' || obj_ || ' / ' || obj_typ_ || ' / ' || usage_id_);
+        dbms_output.put_line('find_definition: obj: ' || obj_ || ' / ' || obj_typ_ || ', usage_id: ' || usage_id_ || ',' || usage_id_l);
+        dbms_output.put_line('    ' || sqlerrm);
 
         sig := null;
 
