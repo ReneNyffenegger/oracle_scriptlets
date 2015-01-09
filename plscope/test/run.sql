@@ -50,8 +50,10 @@ connect tq84_plscope_test/tq84_plscope_test;
 
 
 @pck_a.pks
+@pck_b.pks
 
 @pck_a.pkb
+@pck_b.pkb
 
 -- Install PL-Scope:
 
@@ -70,3 +72,8 @@ exec plscope.fill_call(user, true);
 
 -- Vim Tests
 @@../vim/unused_constants.sql
+@@../vim/unused_functions.sql
+
+
+$fc unused_constants.ef unused_constants.expected
+$fc unused_functions.ef unused_functions.expected
