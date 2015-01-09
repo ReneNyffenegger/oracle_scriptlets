@@ -73,7 +73,9 @@ exec plscope.fill_call(user, true);
 -- Vim Tests
 @@../vim/unused_constants.sql
 @@../vim/unused_functions.sql
+@@../vim/unused_variables.sql
 
 
 $fc unused_constants.ef unused_constants.expected
 $fc unused_functions.ef unused_functions.expected
+$fc unused_variables.ef unused_variables.expected
