@@ -15,10 +15,10 @@ select distinct
   x.col                          || '-' ||
   x.name   t
 from (
-   select signature from tq84_all_identifiers where usage in ('DECLARATION') and type in ('CONSTANT') and owner = user
+   select signature from all_identifiers where usage in ('DECLARATION') and type in ('CONSTANT') and owner = user
    minus
-   select signature from tq84_all_identifiers where usage in ('REFERENCE') and owner = user
-) o, tq84_all_identifiers x 
+   select signature from all_identifiers where usage in ('REFERENCE') and owner = user
+) o, all_identifiers x 
 where o.signature = x.signature
 order by 
   1
