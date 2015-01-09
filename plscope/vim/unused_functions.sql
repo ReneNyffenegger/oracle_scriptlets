@@ -26,19 +26,17 @@ from (
      select 
        distinct signature 
      from 
-       tq84_all_identifiers 
+       all_identifiers 
      where 
-       usage       in ( 'DEFINITION' ,   'DECLARATION'              )           and 
-       type        in ('FUNCTION', 'PROCEDURE', 'CURSOR' ,'VARIABLE')           and 
-       object_type in ('PACKAGE', 'PACKAGE BODY')                               and
-       name not in ('GETBDYVERSION', 'PACKAGE_VERSION', 'PACKAGE_BODY_VERSION') and
-       name not like 'HLP_%'                                                    and
+       usage       in ('DEFINITION' ,   'DECLARATION'                   )     and 
+       type        in ('FUNCTION', 'PROCEDURE' /*,'CURSOR' ,'VARIABLE'*/)     and 
+       object_type in ('PACKAGE', 'PACKAGE BODY')                             and
        owner = user
      minus
      select 
        signature
      from 
-       tq84_all_identifiers
+       all_identifiers
      where 
 --     (usage = 'DECLARATION' and object_type = 'PACKAGE') or -- << Only functions that are declared in package body
 --                                                            --    Comment, if all unreferenced functions are desired.
