@@ -419,7 +419,8 @@ create or replace package body plscope as
 
        for o in (
           select object_type, object_name from user_objects
-           where object_type in ('PACKAGE', 'TYPE', 'FUNCTION', 'PROCEDURE' /*, 'TRIGGER' */)
+           where object_type in ('PACKAGE', 'TYPE', 'FUNCTION', 'PROCEDURE' /*, 'TRIGGER' */) and
+                 object_name not in ('PLSCOPE')
        ) loop
 
          begin
