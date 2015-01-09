@@ -6,10 +6,35 @@
 --   Then call 'plscope.fill_call'.
 --
 
-drop view  plscope_ref_v;
-drop view  plscope_call_v;
-drop table plscope_call      purge;
-drop table plscope_callable  purge;
+
+declare
+
+   procedure drop_if_exists(name in varchar2) is -- {
+
+       type_ varchar2(30);
+   begin
+
+       select object_type into type_ from user_objects where object_name = upper(name);
+
+       execute immediate 
+           'drop ' || type_  || ' ' || name ||
+            case when type_ = 'TABLE' then ' purge' end;
+
+   exception when no_data_found then
+  
+       null;
+       
+   end drop_if_exists; -- }
+
+begin
+
+   drop_if_exists ('plscope_ref_v'   );
+   drop_if_exists ('plscope_call_v'  );
+   drop_if_exists ('plscope_call'    );
+   drop_if_exists ('plscope_callable');
+
+end;
+/
 
 
 create table plscope_callable (
