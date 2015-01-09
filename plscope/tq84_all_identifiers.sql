@@ -1,6 +1,3 @@
-drop table tq84_all_identifiers purge;
--- truncate table tq84_all_identifiers;
-
 --
 --     Workaround for a bug.
 --
@@ -9,6 +6,31 @@ drop table tq84_all_identifiers purge;
 --     Query below extracted from all_identifiers, but
 --     with outer join to sys.plscope_identifier$.
 --
+
+declare procedure drop_if_exists is -- {
+       type_ varchar2(30);
+   begin
+
+       select object_type into type_ from user_objects where object_name = 'TQ84_ALL_IDENTIFIERS';
+
+       execute immediate
+           'drop ' || type_  || ' tq84_all_identifiers' ||
+            case when type_ = 'TABLE' then ' purge' end;
+
+   exception when no_data_found then
+
+       null;
+
+   end drop_if_exists;
+
+begin
+
+   drop_if_exists;
+
+end;
+/
+
+
 
 create table tq84_all_identifiers (
   owner,
@@ -49,10 +71,10 @@ decode(o.type#, 5, 'SYNONYM', 7, 'PROCEDURE', 8, 'FUNCTION', 9, 'PACKAGE',
 decode(a.action, 1, 'DECLARATION', 2, 'DEFINITION', 3, 'CALL', 4, 'REFERENCE',
                  5, 'ASSIGNMENT', 'UNDEFINED') usage,
   a.action# usage_id, a.line, a.col, a.context# usage_context_id
-from 
-  sys."_CURRENT_EDITION_OBJ" o, 
-  sys.plscope_identifier$ i, 
-  sys.plscope_action$ a, 
+from
+  sys."_CURRENT_EDITION_OBJ" o,
+  sys.plscope_identifier$ i,
+  sys.plscope_action$ a,
   sys.user$ u
 where i.signature (+) = a.signature
   and o.obj# = a.obj#
