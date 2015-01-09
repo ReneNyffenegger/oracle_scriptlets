@@ -85,4 +85,4 @@ where i.signature (+) = a.signature
 
 commit;
 
-create synonym all_identifiers for tq84a.tq84_all_identifiers;
+create synonym all_identifiers for tq84_all_identifiers;
