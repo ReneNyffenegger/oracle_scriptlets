@@ -48,6 +48,7 @@ grant all on sys.user$                  to tq84_plscope_test;
 
 connect tq84_plscope_test/tq84_plscope_test;
 
+@tab_01.sql
 
 @pck_a.pks
 @pck_b.pks
