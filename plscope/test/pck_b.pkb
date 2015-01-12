@@ -11,7 +11,13 @@ create package body pck_b as -- {
     end fun_another_unused; -- }
 
     function fun_2 return varchar2 is -- {
+      rec used_rec_t;
     begin
+
+       select id into rec.id
+         from tab_01
+        where id = 1;
+
       return 'fun_2';
     end fun_2;
 
