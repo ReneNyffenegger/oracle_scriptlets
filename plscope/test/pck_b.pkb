@@ -15,7 +15,7 @@ create package body pck_b as -- {
       return 'fun_2';
     end fun_2;
 
-    function fun_1 return varchar2 is -- {
+    function not_really_used return varchar2 is -- {
 
       type rec_t is record (
           id      number,
@@ -29,7 +29,7 @@ create package body pck_b as -- {
       select id into rec.id from tab_01 where rownum = 1;
 
       return fun_2 || pck_a.foo_bar_baz;
-    end fun_1; -- }
+    end not_really_used; -- }
 
 end pck_b; -- }
 /
