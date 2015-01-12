@@ -19,7 +19,7 @@ create package body pck_b as -- {
         where id = 1;
 
       return 'fun_2';
-    end fun_2;
+    end fun_2; -- }
 
     function not_really_used return varchar2 is -- {
 

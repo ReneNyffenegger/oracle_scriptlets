@@ -52,9 +52,11 @@ connect tq84_plscope_test/tq84_plscope_test;
 
 @pck_a.pks
 @pck_b.pks
+@pck_c.pks
 
 @pck_a.pkb
 @pck_b.pkb
+@pck_c.pkb
 
 -- Install PL-Scope:
 
@@ -65,8 +67,11 @@ connect tq84_plscope_test/tq84_plscope_test;
 
 -- Run PL-Scope
 
+connect tq84_plscope_test/tq84_plscope_test
 exec plscope.gather_identifiers
 @@../tq84_all_identifiers
+commit;
+
 -- Prevent ORA-04068: existing state of packages has been discarded
 connect tq84_plscope_test/tq84_plscope_test
 exec plscope.fill_call(user, true);
