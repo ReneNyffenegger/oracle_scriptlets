@@ -417,19 +417,26 @@ create or replace package body plscope as
 
        execute immediate q'!alter session set plscope_settings='IDENTIFIERS:ALL'!';
 
-       for o in (
-          select object_type, object_name from user_objects
-           where object_type in ('PACKAGE', 'TYPE', 'FUNCTION', 'PROCEDURE' /*, 'TRIGGER' */) and
-                 object_name not in ('PLSCOPE')
-       ) loop
+       for i in 1 .. 2 loop
+       --
+       -- For a reason I don't really understand, the loop needs to run twice,
+       -- as otherwise not all identifiers are collected correctly.
 
-         begin
-           execute immediate 'alter ' || o.object_type || ' ' || o.object_name || ' compile';
-         exception when others then
-           dbms_output.new_line;
-           dbms_output.put_line (sqlerrm);
-           dbms_output.put_line (' ' || o.object_name || ' (' || o.object_type || ')');
-         end;
+           for o in (
+              select object_type, object_name from user_objects
+               where object_type in ('PACKAGE', 'TYPE', 'FUNCTION', 'PROCEDURE' /*, 'TRIGGER' */) and
+                     object_name not in ('PLSCOPE')
+           ) loop
+    
+             begin
+               execute immediate 'alter ' || o.object_type || ' ' || o.object_name || ' compile';
+             exception when others then
+               dbms_output.new_line;
+               dbms_output.put_line (sqlerrm);
+               dbms_output.put_line (' ' || o.object_name || ' (' || o.object_type || ')');
+             end;
+    
+           end loop;
 
        end loop;
 
