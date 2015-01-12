@@ -31,4 +31,4 @@ order by
   x.object_name,
   x.line desc;
 
-spool off
+@spool_off

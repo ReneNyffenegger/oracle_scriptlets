@@ -24,5 +24,5 @@ order by
   1
 ;
 
-spool off
+@spool_off
 

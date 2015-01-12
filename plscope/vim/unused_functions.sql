@@ -52,4 +52,4 @@ from (
     line,
     col;
 
-spool off
+@spool_off
