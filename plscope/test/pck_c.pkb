@@ -26,5 +26,9 @@ create package body pck_c as -- {
 
     end func_c_01; -- }
 
+    function func_c_trg_01  return varchar2 is begin -- called by trg_01 {
+        return 'TRG_01';
+    end func_c_trg_01; -- }
+
 end pck_c; -- }
 /

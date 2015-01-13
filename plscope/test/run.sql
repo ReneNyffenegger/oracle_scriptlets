@@ -33,6 +33,7 @@ grant
   create session,
   create synonym,
   create table,
+  create trigger,
   create view
   to tq84_plscope_test;
 
@@ -57,6 +58,9 @@ connect tq84_plscope_test/tq84_plscope_test;
 @pck_a.pkb
 @pck_b.pkb
 @pck_c.pkb
+
+@trg_01.plsql
+
 
 -- Install PL-Scope:
 
