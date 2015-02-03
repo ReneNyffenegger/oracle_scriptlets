@@ -3,6 +3,9 @@ declare
 --
 --    TODO: Synonyms can have the same name as a table, view, package etc.
 --
+--    To drop a user/schema, use
+--       drop_schema_if_exists.sql
+--
 
   obj_name varchar2(30) := '&1';
   obj_type varchar2(30);
