@@ -10,8 +10,9 @@ set exitcommit       off
 
 define _editor=gvim
 
-alter session set nls_date_format = 'dd.mm.yyyy hh24:mi:ss';
-alter session set nls_language    = 'english';
+alter session set nls_date_format      = 'dd.mm.yyyy hh24:mi:ss';
+alter session set nls_language         = 'english';
+alter session set nls_length_semantics =  char;
 
 --  SQL Prompt {
 set termout off
