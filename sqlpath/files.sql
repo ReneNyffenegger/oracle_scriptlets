@@ -21,3 +21,15 @@ from
 order by
   ts.tablespace_name,
   nvl(df.file_name, tf.file_name) ;
+
+prompt
+prompt "Trace files"
+prompt
+
+select
+  initcap(substr(name, 1, 4))  what,
+  substr(value, 1, 100)        directory
+from
+  v$parameter
+where
+  name like '%dump_dest';
