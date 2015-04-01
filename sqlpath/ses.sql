@@ -14,6 +14,7 @@ with ses_sql as (
     ses.osuser,
     ses.logon_time,
     sql.sql_text,
+    sql.sql_id,
     sql.piece,
     (sysdate - ses.sql_exec_start) * 60 * 60 * 24 sql_running_since,
     case when ses.sid = lag(ses.sid) over (order by ses.sid, sql.piece) then 0 else 1 end new_session
@@ -29,6 +30,7 @@ select
   case when new_session = 1 then username          end username,
   case when new_session = 1 then osuser            end osuser,
   case when new_session = 1 then logon_time        end logon_time_,
+  case when new_session = 1 then sql_id            end sql_id,        -- In order to see sql text with newlines, use this ID in combination with -> sqlid.sql
   sql_text,
   case when new_session = 1 then sql_running_since end sql_run
 from 
