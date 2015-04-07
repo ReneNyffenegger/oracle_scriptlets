@@ -1,3 +1,6 @@
+--
+--  Show information about obect etc for a rowid.
+--
 set verify off
 
 declare
