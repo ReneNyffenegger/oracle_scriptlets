@@ -36,7 +36,7 @@ begin
    where object_id = object_number;
 
   dbms_output.new_line;
-  dbms_output.put_line('Rowid Type:   ' || case rowid_type when dbms_rowid.rowid_type_restricted then 'Restricted' when dbms_rowid.rowid_type_restricted then 'Extended' else '?' end);
+  dbms_output.put_line('Rowid Type:   ' || case rowid_type when dbms_rowid.rowid_type_restricted then 'Restricted' when dbms_rowid.rowid_type_extended then 'Extended' else '?' end);
   dbms_output.put_line('Object:       ' || obj_owner || '.' || obj_name || ' (' || obj_type || ') / ' || object_number);
   dbms_output.put_line('Rel. Fileno:  ' || relative_fno);
   dbms_output.put_line('Block No:     ' || block_number);
