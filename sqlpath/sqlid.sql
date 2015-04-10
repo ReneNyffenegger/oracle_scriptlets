@@ -23,14 +23,20 @@ begin
 
         c := substr(s.sql_text, i, 1);
 
-        if c = chr(10) then
+        if    c = chr(10) then
 
-           dbms_output.put_line(l);
-           l := '';
+              dbms_output.put_line(l);
+              l := '';
+
+        elsif length(l) > 3999 then
+        --    Adjust for width of terminal here.
+
+              dbms_output.put_line(l);
+              l := c;
 
         else
 
-           l := l || c;
+              l := l || c;
 
         end if;
 
