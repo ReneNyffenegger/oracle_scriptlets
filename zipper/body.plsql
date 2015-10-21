@@ -14,14 +14,16 @@ create or replace package body zipper as -- {
     v_now   date;
     lz_blob blob;
     lz_len  integer;
+    cn_len  integer;
+
+    blob_temp blob;
+
+
   begin
     v_now   := sysdate;
     lz_blob := utl_compress.lz_compress(content);
     lz_len  := dbms_lob.getlength(lz_blob);
-
-    if zip is null then
-       dbms_lob.createTemporary(zip, true);
-    end if;
+    cn_len  := dbms_lob.getlength(content);
 
     dbms_lob.append(
       zip,
@@ -60,8 +62,9 @@ create or replace package body zipper as -- {
       )
     );
 
-    dbms_lob.append(zip, dbms_lob.substr(lz_blob, lz_len - 18, 11));     -- compressed content
-    dbms_lob.freetemporary(lz_blob);
+    blob_temp := blob_wrapper.substr(lz_blob, lz_len-18, 11);
+    dbms_lob.append(zip, blob_temp);
+    dbms_lob.freetemporary(blob_temp);
 
   end addFile; -- }
 
