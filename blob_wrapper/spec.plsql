@@ -32,5 +32,7 @@ create or replace package blob_wrapper as
   function  from_file(dir in varchar2, file in varchar2) return blob;
   procedure from_file(dir in varchar2, file in varchar2, b in out blob);
 
+  function  substr(b in blob, length_ in number, start_ in number, chunk_size in number := 30000) return blob;
+
 end blob_wrapper;
 /

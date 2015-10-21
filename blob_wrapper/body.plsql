@@ -63,5 +63,40 @@ create or replace package body blob_wrapper as
 
   end from_file;/*}*/
 
+  function substr(b in blob, length_ in number, start_ in number, chunk_size in number := 30000) return blob is -- {
+     ret       blob; 
+
+     offset_   number;
+     amount_   number;
+
+     nof_pieces number;
+  begin
+     dbms_lob.createTemporary(ret, true);
+
+     nof_pieces := 1+trunc( (length_ - 1) / chunk_size);
+
+     for piece in 0 .. nof_pieces -1 loop
+
+       dbms_output.put_line('  piece: ' || piece);
+
+       offset_ := start_ + piece * chunk_size;
+       
+       if (piece+1) * chunk_size > length_ then
+          amount_ := mod(length_, chunk_size);
+       else
+          amount_ := chunk_size;
+       end if;
+
+       dbms_output.put_line('amount_: ' || amount_);
+       dbms_output.put_line('offset_: ' || offset_);
+
+       dbms_lob.append(ret, dbms_lob.substr(b, amount_, offset_));
+
+     end loop;
+
+     return ret;
+
+  end substr; -- }
+
 end blob_wrapper;
 /
