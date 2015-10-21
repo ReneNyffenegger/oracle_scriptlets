@@ -9,6 +9,7 @@ declare
 
   smtp_conn   utl_smtp.connection;
 
+  zip         blob;
 
   function create_zip return blob is -- {
 
@@ -20,6 +21,8 @@ declare
     file4 blob := utl_raw.cast_to_raw('file four' || chr(13) || chr(10) || 'second line');
 
   begin
+
+    dbms_lob.createTemporary(zip, true);
 
     -- ../zipper
     zipper.addFile(zip, 'hi-world.txt'              , file1 );
@@ -70,9 +73,12 @@ begin
 </html>
   }');
 
-  mailer.attachment(smtp_conn, 'The.zip', create_zip());
+  zip := create_zip();
+  mailer.attachment(smtp_conn, 'The.zip', zip);
 
   mailer.end_mail(smtp_conn);
+
+  dbms_lob.freeTemporary(zip);
 
 
 end;
