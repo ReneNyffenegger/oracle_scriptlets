@@ -77,18 +77,21 @@ create or replace package body blob_wrapper as
 
      for piece in 0 .. nof_pieces -1 loop
 
-       dbms_output.put_line('  piece: ' || piece);
+--     dbms_output.put_line('  piece: ' || piece);
 
        offset_ := start_ + piece * chunk_size;
        
        if (piece+1) * chunk_size > length_ then
           amount_ := mod(length_, chunk_size);
+--        dbms_output.put_line(' >: amount_: ' || amount_);
        else
           amount_ := chunk_size;
+--        dbms_output.put_line(' <: amount_: ' || amount_);
        end if;
 
-       dbms_output.put_line('amount_: ' || amount_);
-       dbms_output.put_line('offset_: ' || offset_);
+--     dbms_output.put_line('length_: ' || length_);
+--     dbms_output.put_line('amount_: ' || amount_);
+--     dbms_output.put_line('offset_: ' || offset_);
 
        dbms_lob.append(ret, dbms_lob.substr(b, amount_, offset_));
 
