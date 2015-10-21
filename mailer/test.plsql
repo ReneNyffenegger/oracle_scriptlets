@@ -20,17 +20,30 @@ declare
     file3 blob := utl_raw.cast_to_raw('one two three'                                   );
     file4 blob := utl_raw.cast_to_raw('file four' || chr(13) || chr(10) || 'second line');
 
+    large_file blob;
+
+    i number := 1;
+
   begin
 
-    dbms_lob.createTemporary(zip, true);
+    dbms_lob.createTemporary(zip       , true);
+    dbms_lob.createTemporary(large_file, true);
+
+    while i < 10000 loop
+
+      dbms_lob.append(large_file, utl_raw.cast_to_raw(to_char(to_date(i, 'j'),'jsp') || chr(13) || chr(10)));
+      i := i+1;
+    end loop;
 
     -- ../zipper
-    zipper.addFile(zip, 'hi-world.txt'              , file1 );
-    zipper.addFile(zip, 'file_2.txt'                , file2 );
-    zipper.addFile(zip, 'subdir1/file_3.txt'        , file3 );
-    zipper.addFile(zip, 'subdir1/subdir2/file_4.txt', file4 );
+    zipper.addFile(zip, 'hi-world.txt'              , file1     );
+    zipper.addFile(zip, 'file_2.txt'                , file2     );
+    zipper.addFile(zip, 'subdir1/file_3.txt'        , file3     );
+    zipper.addFile(zip, 'subdir1/subdir2/file_4.txt', file4     );
+    zipper.addFile(zip, 'subdir1/large/file.txt'    , large_file);
 
     zipper.finish (zip);
+    dbms_lob.freeTemporary(large_file);
 
     return zip;
 
