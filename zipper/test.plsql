@@ -27,7 +27,9 @@ begin
   zipper.addFile(zip, 'file_2.txt'                    , file2 );
   zipper.addFile(zip, 'subdir1/file_3.txt'            , file3 );
   zipper.addFile(zip, 'subdir1/subdir2/four_lines.txt', file4 );
-  zipper.addFile(zip, 'subdir1/large/file.txt'    , large_file ); zipper.finish (zip);
+  zipper.addFile(zip, 'subdir1/large/file.txt'    , large_file );
+
+  zipper.finish (zip);
 
   -- ../blob_wrapper/
   blob_wrapper.to_file('ZIP_DIR', 'tq84.zip', zip);
