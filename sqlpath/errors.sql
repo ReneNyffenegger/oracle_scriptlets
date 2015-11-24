@@ -1,1 +1,1 @@
-select name, type, line, position, substr(text, 1, 90) from dba_errors;
+select name, type, line, position, substr(text, 1, 90) from all_errors;
