@@ -69,6 +69,51 @@ create or replace package body operation_log as
 
   end dedent; -- }
 
+  procedure print_id_recursively(p_id number, p_level number := 0) is -- {
+    v_first   boolean := true;
+    v_tm      varchar2(21);
+    v_txt     varchar2(4000);
+    v_caller  varchar2(4000);
+
+    v_cnt_children number;
+    c_txt_width    constant number := 120;
+    c_caller_width constant number := 150;
+    c_curly_braces boolean := false;
+  begin
+
+    select to_char(tm, 'yyyy-mm-dd hh24:mi:ss'), txt, substr(caller, 1, c_caller_width)
+      into       v_tm                         ,v_txt,      v_caller
+      from operation_log_table
+     where id = p_id;
+
+    select count(*) into v_cnt_children from operation_log_table where id_parent = p_id;
+
+    dbms_output.put( substr(rpad( 
+                                lpad(' ', p_level * 2) || v_txt,
+                                c_caller_width), 
+                                1, c_txt_width) || ' ' ||
+                              v_tm || ' ' || 
+                              v_caller);
+
+    if c_curly_braces and v_cnt_children > 0 then 
+       dbms_output.put_line(' ' || chr(123));
+    else
+       dbms_output.put_line('');
+    end if;
+
+
+    for r in (select id from operation_log_table where id_parent = p_id        order by id) loop
+        print_id_recursively(r.id, p_level + 1);
+    end loop;
+
+    if c_curly_braces then
+       if v_cnt_children > 0  then
+          dbms_output.put_line(lpad(' ', (p_level) * 2) || chr(125));
+       end if;
+    end if;
+
+  end print_id_recursively; -- }
+
 end operation_log;
 /
 show errors
