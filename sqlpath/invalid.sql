@@ -3,8 +3,15 @@
 --       an invalid state.
 --
 select
-  object_name, owner, object_type
+  object_name, owner, object_type, status
 from
-  dba_objects
+  all_objects
 where
-  status = 'INVALID';
+  status != 'VALID';
+
+select
+  index_name, owner, 'INDEX', status
+from
+  all_indexes
+where
+  status != 'VALID';
