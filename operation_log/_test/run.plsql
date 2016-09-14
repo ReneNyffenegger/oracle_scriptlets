@@ -7,30 +7,38 @@ create table operation_log_table_expected (
    id                       number,
 -- tm                       date,
    txt                      varchar2(4000),
-   caller                   varchar2(4000),
+   --
+    caller_type             varchar2(32),
+    caller_name             varchar2(30),
+    caller_pkg_name         varchar2(30),
+    caller_line             number  ( 6),
+    caller_owner            varchar2(30),
+    --
    is_exception             varchar2(1),
    id_parent                number,
    error_backtrace          varchar2(4000)
 );
 
 
-insert into operation_log_table_expected values( 1, 'Foo Bar Baz'             , 'PROCEDURE BF.OPERATION_LOG_TEST.PROC_A, line: 6'  , 'N', null, null);
-insert into operation_log_table_expected values( 2, 'Iterating i 1 .. 3'      , 'PROCEDURE BF.OPERATION_LOG_TEST.PROC_A, line: 8'  , 'N', null, null);
-insert into operation_log_table_expected values( 3, 'i: 1'                    , 'PROCEDURE BF.OPERATION_LOG_TEST.PROC_A, line: 12' , 'N',    2, null);
-insert into operation_log_table_expected values( 4, 'Iterating j 1 .. 1'      , 'PROCEDURE BF.OPERATION_LOG_TEST.PROC_A, line: 14' , 'N',    2, null);
-insert into operation_log_table_expected values( 5, 'j: 1'                    , 'PROCEDURE BF.OPERATION_LOG_TEST.PROC_A, line: 17' , 'N',    4, null);
-insert into operation_log_table_expected values( 6, 'finished'                , 'PROCEDURE BF.OPERATION_LOG_TEST.PROC_A, line: 20' , 'N',    2, null);
-insert into operation_log_table_expected values( 7, 'i: 2'                    , 'PROCEDURE BF.OPERATION_LOG_TEST.PROC_A, line: 12' , 'N',    2, null);
-insert into operation_log_table_expected values( 8, 'Iterating j 1 .. 2'      , 'PROCEDURE BF.OPERATION_LOG_TEST.PROC_A, line: 14' , 'N',    2, null);
-insert into operation_log_table_expected values( 9, 'j: 1'                    , 'PROCEDURE BF.OPERATION_LOG_TEST.PROC_A, line: 17' , 'N',    8, null);
-insert into operation_log_table_expected values(10, 'j: 2'                    , 'PROCEDURE BF.OPERATION_LOG_TEST.PROC_A, line: 17' , 'N',    8, null);
-insert into operation_log_table_expected values(11, 'finished'                , 'PROCEDURE BF.OPERATION_LOG_TEST.PROC_A, line: 20' , 'N',    2, null);
-insert into operation_log_table_expected values(12, 'i: 3'                    , 'PROCEDURE BF.OPERATION_LOG_TEST.PROC_A, line: 12' , 'N',    2, null);
-insert into operation_log_table_expected values(13, 'Iterating j 1 .. 3'      , 'PROCEDURE BF.OPERATION_LOG_TEST.PROC_A, line: 14' , 'N',    2, null);
-insert into operation_log_table_expected values(14, 'j: 1'                    , 'PROCEDURE BF.OPERATION_LOG_TEST.PROC_A, line: 17' , 'N',   13, null);
-insert into operation_log_table_expected values(15, 'j: 2'                    , 'PROCEDURE BF.OPERATION_LOG_TEST.PROC_A, line: 17' , 'N',   13, null);
-insert into operation_log_table_expected values(16, 'j: 3'                    , 'PROCEDURE BF.OPERATION_LOG_TEST.PROC_A, line: 17' , 'N',   13, null);
-insert into operation_log_table_expected values(17, 'finished'                , 'PROCEDURE BF.OPERATION_LOG_TEST.PROC_A, line: 20' , 'N',    2, null);
+--                                             (        ID   TXT                     CALLER_TYPE        CALLER_NAME       CALLER_PKG_NAME      CALLER_LINE  CALLER_OWNER     I     ID_PARENT   ERROR_BACKTRACE
+--                                             (----------,  ---------------------,  ----------------,  ---------------,  --------------------,-----------, -------------,  '-' , ----------,  ---------------
+insert into operation_log_table_expected values(         1, 'Foo Bar Baz'         , 'PROCEDURE'      , 'PROC_A'        , 'OPERATION_LOG_TEST' ,          6, user         ,  'N' ,       null,  null);  
+insert into operation_log_table_expected values(         2, 'Iterating i 1 .. 3'  , 'PROCEDURE'      , 'PROC_A'        , 'OPERATION_LOG_TEST' ,          8, user         ,  'N' ,       null,  null);
+insert into operation_log_table_expected values(         3, 'i: 1'                , 'PROCEDURE'      , 'PROC_A'        , 'OPERATION_LOG_TEST' ,         12, user         ,  'N' ,          2,  null);
+insert into operation_log_table_expected values(         4, 'Iterating j 1 .. 1'  , 'PROCEDURE'      , 'PROC_A'        , 'OPERATION_LOG_TEST' ,         14, user         ,  'N' ,          2,  null);
+insert into operation_log_table_expected values(         5, 'j: 1'                , 'PROCEDURE'      , 'PROC_A'        , 'OPERATION_LOG_TEST' ,         17, user         ,  'N' ,          4,  null);
+insert into operation_log_table_expected values(         6, 'finished'            , 'PROCEDURE'      , 'PROC_A'        , 'OPERATION_LOG_TEST' ,         20, user         ,  'N' ,          2,  null);
+insert into operation_log_table_expected values(         7, 'i: 2'                , 'PROCEDURE'      , 'PROC_A'        , 'OPERATION_LOG_TEST' ,         12, user         ,  'N' ,          2,  null);
+insert into operation_log_table_expected values(         8, 'Iterating j 1 .. 2'  , 'PROCEDURE'      , 'PROC_A'        , 'OPERATION_LOG_TEST' ,         14, user         ,  'N' ,          2,  null);
+insert into operation_log_table_expected values(         9, 'j: 1'                , 'PROCEDURE'      , 'PROC_A'        , 'OPERATION_LOG_TEST' ,         17, user         ,  'N' ,          8,  null);
+insert into operation_log_table_expected values(        10, 'j: 2'                , 'PROCEDURE'      , 'PROC_A'        , 'OPERATION_LOG_TEST' ,         17, user         ,  'N' ,          8,  null);
+insert into operation_log_table_expected values(        11, 'finished'            , 'PROCEDURE'      , 'PROC_A'        , 'OPERATION_LOG_TEST' ,         20, user         ,  'N' ,          2,  null);
+insert into operation_log_table_expected values(        12, 'i: 3'                , 'PROCEDURE'      , 'PROC_A'        , 'OPERATION_LOG_TEST' ,         12, user         ,  'N' ,          2,  null);
+insert into operation_log_table_expected values(        13, 'Iterating j 1 .. 3'  , 'PROCEDURE'      , 'PROC_A'        , 'OPERATION_LOG_TEST' ,         14, user         ,  'N' ,          2,  null);
+insert into operation_log_table_expected values(        14, 'j: 1'                , 'PROCEDURE'      , 'PROC_A'        , 'OPERATION_LOG_TEST' ,         17, user         ,  'N' ,         13,  null);
+insert into operation_log_table_expected values(        15, 'j: 2'                , 'PROCEDURE'      , 'PROC_A'        , 'OPERATION_LOG_TEST' ,         17, user         ,  'N' ,         13,  null);
+insert into operation_log_table_expected values(        16, 'j: 3'                , 'PROCEDURE'      , 'PROC_A'        , 'OPERATION_LOG_TEST' ,         17, user         ,  'N' ,         13,  null);
+insert into operation_log_table_expected values(        17, 'finished'            , 'PROCEDURE'      , 'PROC_A'        , 'OPERATION_LOG_TEST' ,         20, user         ,  'N' ,          2,  null);
 
 create or replace package operation_log_test as
 
@@ -75,7 +83,13 @@ exec operation_log_test.proc_a
 create table operation_log_table_gotten as select
   id,
   txt,
-  caller,
+  --
+  caller_type,
+  caller_name,
+  caller_pkg_name,
+  caller_line,
+  caller_owner,
+  --
   is_exception,
   id_parent,
   error_backtrace

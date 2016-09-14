@@ -12,7 +12,7 @@ create or replace package body operation_log as
     pragma autonomous_transaction;
 
     v_back_trace   varchar2(4000);
-    v_caller       varchar2(4000) := who_am_i(2);
+    v_caller call_stack.who_am_i_r := call_stack.who_am_i(2);
 
     v_parent_id number;
 
@@ -22,7 +22,13 @@ create or replace package body operation_log as
        v_parent_id := parent_ids(parent_ids.count);
     end if;
 
-    insert into operation_log_table values (operation_log_seq.nextval, sysdate, p_txt, v_caller, p_is_exception, v_parent_id, p_back_trace);
+    insert into operation_log_table values (operation_log_seq.nextval, sysdate, p_txt,
+      v_caller.type_,
+      v_caller.name_,
+      v_caller.pkg_name,
+      v_caller.line,
+      v_caller.owner,
+      p_is_exception, v_parent_id, p_back_trace);
 
     commit;
 
@@ -73,7 +79,13 @@ create or replace package body operation_log as
     v_first   boolean := true;
     v_tm      varchar2(21);
     v_txt     varchar2(4000);
-    v_caller  varchar2(4000);
+--  v_caller  varchar2(4000);
+
+    v_caller_type      operation_log_table.caller_type      %type;
+    v_caller_name      operation_log_table.caller_name      %type;
+    v_caller_pkg_name  operation_log_table.caller_pkg_name  %type;
+    v_caller_line      operation_log_table.caller_line      %type;
+    v_caller_owner     operation_log_table.caller_owner     %type;
 
     v_cnt_children number;
     c_txt_width    constant number := 120;
@@ -81,8 +93,8 @@ create or replace package body operation_log as
     c_curly_braces boolean := false;
   begin
 
-    select to_char(tm, 'yyyy-mm-dd hh24:mi:ss'), txt, substr(caller, 1, c_caller_width)
-      into       v_tm                         ,v_txt,      v_caller
+    select to_char(tm, 'yyyy-mm-dd hh24:mi:ss'), txt,  caller_type,  caller_name,  caller_pkg_name,  caller_line,  caller_owner
+      into       v_tm                         ,v_txt,v_caller_type,v_caller_name,v_caller_pkg_name,v_caller_line,v_caller_owner    
       from operation_log_table
      where id = p_id;
 
@@ -93,7 +105,11 @@ create or replace package body operation_log as
                                 c_caller_width), 
                                 1, c_txt_width) || ' ' ||
                               v_tm || ' ' || 
-                              v_caller);
+                                v_caller_name ||
+                                v_caller_pkg_name ||
+                                v_caller_line ||
+                                v_caller_owner
+                              );
 
     if c_curly_braces and v_cnt_children > 0 then 
        dbms_output.put_line(' ' || chr(123));
