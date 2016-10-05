@@ -134,7 +134,7 @@ create or replace package body plan2html as
   begin
 
 
-    write_out('<table border=0 style=''border:black solid 1''>');
+    write_out('<table border=0 style=''border:black solid 1px''>');
     write_out('<tr style=''background-color:#ecdcff''><td></td><td></td><td></td><td>Typ</td><td>Inst</td><td>Card</td><td>Cost</td><td>Bytes</td><td>Temp</td><td>Time</td><td>qblck</td><td>Part</td><td>Dist</td><td>Opt</td><td>S.C.</td></tr>');
     show_step(stmt_id, null, 0);
     write_out('</table>');
