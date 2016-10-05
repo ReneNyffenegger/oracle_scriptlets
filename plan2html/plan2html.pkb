@@ -89,16 +89,16 @@ create or replace package body plan2html as
         td(lower(step.operation) || ' ' || lower(step.options) || object_id, 'colspan=2 style=''' || padding_left || '''');
 
 
-        td(              lower(step.object_type)); 
-        td(              step.object_instance); 
-        td(              step.cardinality); 
-        td(              step.cost || ' [' || step.cpu_cost || '+' || step.io_cost || ']'); 
-        td(              step.bytes); 
-        td(              step.temp_space); 
-        td(              step.time); 
-        td(              step.qblock_name);  -- Name of the query block (either system-generated or defined by the user with the QB_NAME hint)
-        td(              step.partition_start || ' - ' || step.partition_stop || ' [' || step.partition_id || ']'); 
-        td(              step.distribution);
+        td(lower(step.object_type)); 
+        td(      step.object_instance); 
+        td(      step.cardinality, 'style=''text-align: right'''); 
+        td(      step.cost || ' [' || step.cpu_cost || '+' || step.io_cost || ']'); 
+        td(      step.bytes     , 'style=''text-align: right'''); 
+        td(      step.temp_space, 'style=''text-align: right'''); 
+        td(      step.time); 
+        td(      step.qblock_name);  -- Name of the query block (either system-generated or defined by the user with the QB_NAME hint)
+        td(      step.partition_start || ' - ' || step.partition_stop || ' [' || step.partition_id || ']'); 
+        td(      step.distribution);
 --      td('xml: '    || step.other_xml);
 --      td('Other: '  || step.other_tag); 
         td(              step.optimizer); -- ALL_ROWS, ANALYZED ...
@@ -134,8 +134,8 @@ create or replace package body plan2html as
   begin
 
 
-    write_out('<table border=1>');
-    write_out('<tr><td></td><td></td><td></td><td>Typ</td><td>Inst</td><td>Card</td><td>Cost</td><td>Bytes</td><td>Temp</td><td>Time</td><td>qblck</td><td>Part</td><td>Dist</td><td>Opt</td><td>S.C.</td></tr>');
+    write_out('<table border=0 style=''border:black solid 1''>');
+    write_out('<tr style=''background-color:#ecdcff''><td></td><td></td><td></td><td>Typ</td><td>Inst</td><td>Card</td><td>Cost</td><td>Bytes</td><td>Temp</td><td>Time</td><td>qblck</td><td>Part</td><td>Dist</td><td>Opt</td><td>S.C.</td></tr>');
     show_step(stmt_id, null, 0);
     write_out('</table>');
 
