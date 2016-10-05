@@ -30,13 +30,13 @@ create or replace package body plan2html as
 
     begin
 
-      v_rowspan := 1;
-
-      if c_show_projection then
-         v_rowspan := v_rowspan + 1;
-      end if;
 
       for step in (select * from plan_table where statement_id = stmt_id and nvl(parent_id, -999) = nvl(pid, -999) order by position) loop
+        v_rowspan := 1;
+
+        if c_show_projection then
+           v_rowspan := v_rowspan + 1;
+        end if;
 
         padding_left := 'padding-left:' || (lvl * 20) || 'px';
 
@@ -134,7 +134,7 @@ create or replace package body plan2html as
   begin
 
 
-    write_out('<table border=0>');
+    write_out('<table border=1>');
     write_out('<tr><td></td><td></td><td></td><td>Typ</td><td>Inst</td><td>Card</td><td>Cost</td><td>Bytes</td><td>Temp</td><td>Time</td><td>qblck</td><td>Part</td><td>Dist</td><td>Opt</td><td>S.C.</td></tr>');
     show_step(stmt_id, null, 0);
     write_out('</table>');
