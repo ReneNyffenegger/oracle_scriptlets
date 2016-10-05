@@ -11,9 +11,10 @@ create or replace package body plan2html as
 
     c_show_projection constant boolean := false;
 
-    object_id   varchar2(4000);
 
     procedure show_step(stmt_id varchar2, pid number, lvl number) is -- {
+
+      object_id   varchar2(4000);
 
       v_rowspan number;
       padding_left  varchar2(4000);
@@ -57,25 +58,12 @@ create or replace package body plan2html as
 
         if step.object_name is not null then -- {
            object_id := ' <b>' || lower(step.object_owner || '.' || step.object_name) || '</b>';
-
-           if step.object_node is not null then -- {
-              
-              object_id := object_id || '@' || lower(step.object_node);
-
-           end if; -- }
-
-           
-        -- }
-        else -- {
-
-           object_id := null;
-
-           if step.object_node is not null then
-              raise_application_error(-20800, 'wrong assumption');
-           end if;
-
-
         end if; -- }
+           
+        if step.object_node is not null then -- {
+            object_id := object_id || '@' || lower(step.object_node);
+        end if; -- }
+
 
         if step.object_alias is not null then -- {
            if object_id is not null then
