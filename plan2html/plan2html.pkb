@@ -4,7 +4,7 @@ create or replace package body plan2html as
 
   procedure write_out(html varchar2) is -- {
   begin
-      insert into plan2html_t values(opi_out_seq.nextval, html);
+      insert into plan2html_t values(plan2html_seq.nextval, html);
   end write_out; -- }
 
   procedure explained_stmt_to_table(stmt_id varchar2) is -- {
