@@ -19,10 +19,13 @@ with ses_sql as (
     (sysdate - ses.sql_exec_start) * 60 * 60 * 24 sql_running_since,
     case when ses.sid = lag(ses.sid) over (order by ses.sid, sql.piece) then 0 else 1 end new_session
   from
-    v$session ses left join
-    v$sqltext sql on ses.sql_address = sql.address and ses.sql_hash_value = sql.hash_value
+    v$session ses                                                  join
+    v$process prc on ses.paddr = prc.addr                     left join
+    v$sqltext sql on ses.sql_address    = sql.address    and
+                     ses.sql_hash_value = sql.hash_value
   where
-    ses.sid != sys_context('USERENV','SID')
+    ses.sid != sys_context('USERENV','SID') and
+    prc.pname is null  -- Only show one v$session record for statements executed in parallel
 )
 select
   case when new_session = 1 then sid               end sid_,
