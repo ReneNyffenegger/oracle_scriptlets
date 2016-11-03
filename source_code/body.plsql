@@ -16,6 +16,7 @@ create or replace package body source_code as
      v_str_len         number := 0;
 
      v_unknown         type_and_name;
+--   v_type_and_name   type_and_name;
 
      type num_table_t  is table of number;
 
@@ -42,7 +43,7 @@ create or replace package body source_code as
    end loop;
 
    for src in (
-     select 
+     select  -- {
         ' ' || replace(
                   translate(upper(text),
                            ';(' || chr(10),
@@ -59,10 +60,9 @@ create or replace package body source_code as
         type  = p_type  and
         line  < p_line
       order  by
-        line
+        line -- }
    )
-
-   loop
+   loop -- {
 
      v_curr_line := src.text;
 
@@ -177,12 +177,18 @@ create or replace package body source_code as
 
                        v_obj_type := trim(substr(v_curr_line, v_pos1 + 1, 9));  -- get object type
 
+
                        v_curr_line := trim(substr(v_curr_line, v_pos1 + 10))||'  ';  -- cut object type
                        v_curr_line :=      substr(v_curr_line, 1,  instr(v_curr_line, ' ') - 1 );  -- get object name
 
+--                     v_type_and_name.name_ := v_curr_line;
+--                     v_type_and_name.type_ := v_obj_type ;
+
+
                        v_name_stack.extend;
-                       v_name_stack(v_name_stack.count).type_  := v_obj_type;
-                       v_name_stack(v_name_stack.count).name_  := v_curr_line;
+--                     v_name_stack(v_name_stack.last) := v_type_and_name;
+                       v_name_stack(v_name_stack.last ).name_  := v_curr_line;
+                       v_name_stack(v_name_stack.last ).type_  := v_obj_type ;
 
                     end if; -- }
 
@@ -225,10 +231,11 @@ create or replace package body source_code as
 
      end if; -- }
 
-   end loop;
+   end loop; -- }
+
 
    return 
-     case v_name_stack.count
+     case v_name_stack.last
         when 0 then  v_unknown
         else v_name_stack(v_name_stack.last)
     end;

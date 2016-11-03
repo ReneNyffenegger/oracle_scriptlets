@@ -1,7 +1,7 @@
 create or replace package source_code as
 
    type type_and_name is record (
-     type_  varchar2(9),
+     type_  varchar2(99),
      name_  varchar2(30)
    );
 
