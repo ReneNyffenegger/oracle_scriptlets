@@ -1,5 +1,5 @@
 select
-  object_name, object_type
+  object_name, object_type, owner
 from
   all_objects
 where
