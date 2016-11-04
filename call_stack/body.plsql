@@ -55,18 +55,12 @@ create or replace package body call_stack as
 
  -- Remove myself
     v_line := cut_a_line(v_stack);
-    if v_line != '14C9A030        12  PACKAGE BODY RENE.CALL_STACK' then raise_application_error(-20800, 'Wrong assumption, v_line: ' || v_line || '<'); end if;
-
-
-
+    if v_line not like '________        12  PACKAGE BODY RENE.CALL_STACK' then raise_application_error(-20800, 'Wrong assumption, v_line: ' || v_line || '<'); end if;
 
   
     for v_pos2 in 0 .. p_lvl loop  -- advance to the input level
         v_line := cut_a_line(v_stack);
     end loop;
-  
-
-
 
 
     ret.line     := regexp_replace(v_line, '^........ +(\d+).*'              , '\1');
