@@ -55,18 +55,17 @@ create or replace package body call_stack as
 
  -- Remove myself
     v_line := cut_a_line(v_stack);
-    if v_line not like '________        12  PACKAGE BODY RENE.CALL_STACK' then raise_application_error(-20800, 'Wrong assumption, v_line: ' || v_line || '<'); end if;
-
+    if not regexp_like(v_line, '^[0-9A-FX]+        12  PACKAGE BODY .*\.CALL_STACK$') then raise_application_error(-20800, 'Wrong assumption, v_line: ' || v_line || '<'); end if;
   
     for v_pos2 in 0 .. p_lvl loop  -- advance to the input level
         v_line := cut_a_line(v_stack);
     end loop;
 
 
-    ret.line     := regexp_replace(v_line, '^........ +(\d+).*'              , '\1');
-    ret.type_    := regexp_replace(v_line, '^........ +\d+ +(.*) +([^ ]+)$'  , '\1');
-    ret.owner    := regexp_replace(v_line, '^........ +\d+ +.* +([^.]+).*$'  , '\1');
-    ret.pkg_name := regexp_replace(v_line, '^........ +\d+ +.* +[^.]+\.(.*)$', '\1');
+    ret.line     := regexp_replace(v_line, '^[0-9A-FX]+ +(\d+).*'              , '\1');
+    ret.type_    := regexp_replace(v_line, '^[0-9A-FX]+ +\d+ +(.*) +([^ ]+)$'  , '\1');
+    ret.owner    := regexp_replace(v_line, '^[0-9A-FX]+ +\d+ +.* +([^.]+).*$'  , '\1');
+    ret.pkg_name := regexp_replace(v_line, '^[0-9A-FX]+ +\d+ +.* +[^.]+\.(.*)$', '\1');
 
 
 $if false $then
@@ -110,5 +109,3 @@ $end
   end who_am_i; -- }
 
 end call_stack;
-/
-show errors

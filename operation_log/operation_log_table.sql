@@ -18,10 +18,10 @@ create table operation_log_table (
   constraint       operation_log_table_pk  primary key (id),
   constraint operation_log_fk1 foreign key (id_parent) references operation_log_table
 )
-partition by range (tm)
-  interval (numtoyminterval(1, 'month')) (
-  partition operation_log_part_1 values less than (date '2016-12-01')
-)
+-- partition by range (tm)
+--   interval (numtoyminterval(1, 'month')) (
+--   partition operation_log_part_1 values less than (date '2016-12-01')
+-- )
 pctused 0
 ;
 
