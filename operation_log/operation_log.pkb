@@ -130,7 +130,7 @@ create or replace package body operation_log as
 
   end print_id_recursively; -- }
 
-  procedure find_last_root_ids(p_count number := 20) is
+  procedure find_last_root_ids(p_count number := 20) is -- {
   begin
 
     for r in (
@@ -151,7 +151,7 @@ create or replace package body operation_log as
 
     end loop;
 
-  end find_last_root_ids;
+  end find_last_root_ids; -- }
 
 end operation_log;
 /
