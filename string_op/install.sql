@@ -1,4 +1,4 @@
-define tq84_prefix=tq84_
+define tq84_prefix=""
 set    verify off
 
 @@types.plsql

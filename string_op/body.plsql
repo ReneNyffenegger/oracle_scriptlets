@@ -1,3 +1,4 @@
+alter session set plsql_ccflags='string_op_debug:false';
 create or replace package body &tq84_prefix.string_op as
 -- vi: ft=sql
 --
@@ -61,6 +62,8 @@ create or replace package body &tq84_prefix.string_op as
 
   end grep_re; -- }
 
+  -- sprintf related  -- {
+
   function sprintf     (format in varchar2, parms in &tq84_prefix.varchar2_t) return varchar2 -- {
   is -- {
 
@@ -94,7 +97,6 @@ create or replace package body &tq84_prefix.string_op as
         -- Advance cur_pos so that it points to the character
         -- right of the %
         cur_pos := cur_pos + 1;
-  
 
         if substr(format, cur_pos, 1) = '%' then -- {
            -- If % is immediately followed by another %, a literal
@@ -169,7 +171,8 @@ create or replace package body &tq84_prefix.string_op as
                -- (and no dot will be printed, either)
                chars_rite_dot := 0;
                chars_left_dot := to_number(cur_format);
-               chars_total    := chars_left_dot; -- }
+               chars_total    := chars_left_dot;
+            -- }
             else -- {
                chars_rite_dot := to_number(substr(cur_format,    dot_pos + 1));
                chars_left_dot := to_number(substr(cur_format, 1, dot_pos - 1));
@@ -194,6 +197,10 @@ create or replace package body &tq84_prefix.string_op as
                -- The explicit printing of the sign widens the output by one character
                chars_total := chars_total + 1;
             end if; -- }
+
+            $if $$string_op_debug $then
+                dbms_output.put_line('cur_param: ' || cur_param || ', parms(cur_param) = ' || parms(cur_param) || '<');
+            $end
   
             buf := to_char(to_number(parms(cur_param)), to_char_format, 'nls_numeric_characters=''.,''');
   
@@ -207,8 +214,12 @@ create or replace package body &tq84_prefix.string_op as
   
             exit;
             end;
-   -- }
+          -- }
           elsif substr(format, cur_pos, 1) = 's' then -- {
+
+            $if $$string_op_debug $then
+                dbms_output.put_line('string format, format = ' || format || ', cur_pos: ' || cur_pos);
+            $end
   
             if cur_format is null then
               ret := ret || parms(cur_param);
@@ -216,8 +227,14 @@ create or replace package body &tq84_prefix.string_op as
             end if;
   
             if left_aligned then
+               $if $$string_op_debug $then
+                   dbms_output.put_line('  left_aligned, cur_format=' || cur_format);
+               $end
                ret := ret || rpad(nvl(parms(cur_param), ' '), to_number(cur_format));
             else
+               $if $$string_op_debug $then
+                   dbms_output.put_line('  right_aligned, cur_format=' || cur_format);
+               $end
                ret := ret || lpad(nvl(parms(cur_param), ' '), to_number(cur_format));
             end if;
   
@@ -230,7 +247,7 @@ create or replace package body &tq84_prefix.string_op as
          cur_pos := cur_pos + 1;
         end loop; -- }
   
- -- }
+      -- }
       else -- { A non-% character
         ret := ret || substr(format, cur_pos, 1);
       end if; -- }
@@ -243,6 +260,31 @@ create or replace package body &tq84_prefix.string_op as
 
   end sprintf; -- }
 
+  function sprintf(format varchar2, parm_01 varchar2                                                      ) return varchar2 is begin return sprintf(format, &tq84_prefix.varchar2_t(parm_01                           )); end sprintf;
+  function sprintf(format varchar2, parm_01 varchar2, parm_02 varchar2                                    ) return varchar2 is begin return sprintf(format, &tq84_prefix.varchar2_t(parm_01, parm_02                  )); end sprintf;
+  function sprintf(format varchar2, parm_01 varchar2, parm_02 varchar2, parm_03 varchar2                  ) return varchar2 is begin return sprintf(format, &tq84_prefix.varchar2_t(parm_01, parm_02, parm_03         )); end sprintf;
+  function sprintf(format varchar2, parm_01 varchar2, parm_02 varchar2, parm_03 varchar2, parm_04 varchar2) return varchar2 is begin return sprintf(format, &tq84_prefix.varchar2_t(parm_01, parm_02, parm_03, parm_04)); end sprintf;
+ -- }
+
+-- printf related -- {
+  procedure printf(format varchar2, parms in &tq84_prefix.varchar2_t) is begin dbms_output.put_line(sprintf(format, parms)); end printf;
+  procedure printf(format varchar2, parm_01 varchar2                                                      ) is begin dbms_output.put_line(sprintf(format, parm_01                           )); end printf;
+  procedure printf(format varchar2, parm_01 varchar2, parm_02 varchar2                                    ) is begin dbms_output.put_line(sprintf(format, parm_01, parm_02                  )); end printf;
+  procedure printf(format varchar2, parm_01 varchar2, parm_02 varchar2, parm_03 varchar2                  ) is begin dbms_output.put_line(sprintf(format, parm_01, parm_02, parm_03         )); end printf;
+  procedure printf(format varchar2, parm_01 varchar2, parm_02 varchar2, parm_03 varchar2, parm_04 varchar2) is begin dbms_output.put_line(sprintf(format, parm_01, parm_02, parm_03, parm_04)); end printf;
+ -- }
+
+  function is_number(str varchar2) return boolean is -- {
+    num number;
+  begin
+
+--  num := to_number(str, format => 'nls_numeric_characters=''.,''');
+    num := to_number(str, null, 'nls_numeric_characters=''.,''');
+    return true;
+
+  exception when value_error then
+    return false;
+  end is_number; -- }
 
 end &tq84_prefix.string_op;
 /
