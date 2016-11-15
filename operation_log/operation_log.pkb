@@ -130,6 +130,29 @@ create or replace package body operation_log as
 
   end print_id_recursively; -- }
 
+  procedure find_last_root_ids(p_count number := 20) is
+  begin
+
+    for r in (
+
+      select id, tm from (
+
+        select id, tm, row_number() over (order by id desc) r
+          from operation_log_table
+         where id_parent is null
+         order by id desc
+
+      )
+      where r <= p_count
+
+    ) loop
+
+      dbms_output.put_line(to_char(r.id, '9999999') || ': ' || to_char(r.tm, 'dd.mm.yyyy hh24:mi:ss'));
+
+    end loop;
+
+  end find_last_root_ids;
+
 end operation_log;
 /
 show errors

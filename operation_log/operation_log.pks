@@ -7,5 +7,7 @@ create or replace package operation_log as
 
   procedure print_id_recursively(p_id number, p_level number := 0);
 
+  procedure find_last_root_ids(p_count number := 20);
+
 end operation_log;
 /
