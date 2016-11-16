@@ -233,6 +233,11 @@ create or replace package body source_code as
 
    end loop; -- }
 
+   if v_name_stack.last is null then -- {
+   -- TODO: HOw can this happen?
+      dbms_output.put_line('! source_code: v_name_stack.last is null');
+      return v_unknown;
+   end if; -- }
 
    return 
      case v_name_stack.last
