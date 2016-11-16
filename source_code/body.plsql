@@ -3,13 +3,13 @@ create or replace package body source_code as
   function name_from_line(p_name varchar2, p_type varchar2, p_line number, p_owner varchar2 := user) return type_and_name is
   -- original code by GARBUYA 2010 ©.
      v_obj_type        varchar2(30);
-     v_curr_line       varchar2(2048);
+     v_curr_line       varchar2(4000);
      in_comment        boolean := false;
      it_is_literal     boolean := false;
      v_pos1            number  := 0;
      v_pos2            number  := 0;
-     v_tmp_1           varchar2(1024);
-     v_tmp_2           varchar2(1024);
+     v_tmp_1           varchar2(4000);
+     v_tmp_2           varchar2(4000);
      v_bgn_cnt         number := 0;
      v_end_cnt         number := 0;
      v_blk_cnt         number := 0;
