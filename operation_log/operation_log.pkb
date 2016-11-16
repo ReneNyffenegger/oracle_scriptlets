@@ -101,7 +101,7 @@ create or replace package body operation_log as
     select count(*) into v_cnt_children from operation_log_table where id_parent = p_id;
 
     dbms_output.put( substr(rpad( 
-                                lpad(' ', p_level * 2) || v_txt,
+                                lpad(' ', p_level * 2) || replace(v_txt, chr(10), ' '),
                                 c_caller_width), 
                                 1, c_txt_width) || ' ' ||
                               v_tm || ' ' || 
