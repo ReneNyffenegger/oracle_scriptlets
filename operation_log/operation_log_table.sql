@@ -12,8 +12,10 @@ create table operation_log_table (
   caller_owner     varchar2(  30)       not null,
   --
   is_exception     varchar2(   1)       not null check(is_exception in ('N', 'Y')),
-  id_parent        number,
-  error_backtrace  varchar2(4000),
+  id_parent        number                   null,
+  error_backtrace  varchar2(4000)           null,
+  --
+  clob_            clob                     null,
   --
   constraint       operation_log_table_pk  primary key (id),
   constraint operation_log_fk1 foreign key (id_parent) references operation_log_table

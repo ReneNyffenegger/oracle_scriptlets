@@ -5,8 +5,9 @@ create or replace package body operation_log as
 
   procedure log_insert( -- {
     p_txt          varchar2,
-    p_is_exception varchar2 := 'N',
-    p_back_trace   varchar2 := null
+    p_is_exception varchar2 :='N',
+    p_back_trace   varchar2 := null,
+    p_clob         clob     := null
   ) is
 
     pragma autonomous_transaction;
@@ -28,13 +29,15 @@ create or replace package body operation_log as
       v_caller.pkg_name,
       v_caller.line,
       v_caller.owner,
-      p_is_exception, v_parent_id, p_back_trace);
+      p_is_exception, v_parent_id, p_back_trace,
+      p_clob
+      );
 
     commit;
 
   end log_insert; -- }
 
-  procedure log_(txt varchar2, is_exception boolean := false) is -- {
+  procedure log_(txt varchar2, is_exception boolean := false, clob_ clob := null) is -- {
 
     v_is_exception varchar2(1) := 'N';
     v_back_trace   varchar2(4000);
@@ -46,7 +49,7 @@ create or replace package body operation_log as
        v_back_trace := dbms_utility.format_error_backtrace;
     end if;
 
-    log_insert(txt, p_is_exception => v_is_exception, p_back_trace => v_back_trace);
+    log_insert(txt, p_is_exception => v_is_exception, p_back_trace => v_back_trace, p_clob => clob_);
 
   end log_; -- }
 
@@ -87,14 +90,16 @@ create or replace package body operation_log as
     v_caller_line      operation_log_table.caller_line      %type;
     v_caller_owner     operation_log_table.caller_owner     %type;
 
-    v_cnt_children number;
-    c_txt_width    constant number := 120;
-    c_caller_width constant number := 150;
-    c_curly_braces boolean := false;
+    v_cnt_children          number;
+    c_txt_width    constant number  := 120;
+    c_caller_width constant number  := 150;
+    c_curly_braces          boolean := false;
+    v_clob                  char(8);
+
   begin
 
-    select to_char(tm, 'yyyy-mm-dd hh24:mi:ss'), txt,  caller_type,  caller_name,  caller_pkg_name,  caller_line,  caller_owner
-      into       v_tm                         ,v_txt,v_caller_type,v_caller_name,v_caller_pkg_name,v_caller_line,v_caller_owner    
+    select to_char(tm, 'yyyy-mm-dd hh24:mi:ss'), txt,  caller_type,  caller_name,  caller_pkg_name,  caller_line,  caller_owner,case when clob_ is not null then ' -clob- ' else ' ' end
+      into       v_tm                         ,v_txt,v_caller_type,v_caller_name,v_caller_pkg_name,v_caller_line,v_caller_owner,v_clob
       from operation_log_table
      where id = p_id;
 
@@ -103,12 +108,13 @@ create or replace package body operation_log as
     dbms_output.put( substr(rpad( 
                                 lpad(' ', p_level * 2) || replace(v_txt, chr(10), ' '),
                                 c_caller_width), 
-                                1, c_txt_width) || ' ' ||
-                              v_tm || ' ' || 
-                                v_caller_name ||
+                                1, c_txt_width)   || ' ' ||
+                                v_clob            ||
+                                v_tm              || ' ' || 
+                                v_caller_name     ||
                                 v_caller_pkg_name ||
-                                v_caller_line ||
-                                v_caller_owner
+                                v_caller_line     ||
+                                v_caller_owner 
                               );
 
     if c_curly_braces and v_cnt_children > 0 then 
