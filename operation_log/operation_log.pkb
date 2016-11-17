@@ -78,11 +78,10 @@ create or replace package body operation_log as
 
   end dedent; -- }
 
-  procedure print_id_recursively(p_id number, p_level number := 0) is -- {
+  procedure print_id_recursively(p_id number, p_level number := 0, p_curly_braces boolean := false) is -- {
     v_first   boolean := true;
     v_tm      varchar2(21);
     v_txt     varchar2(4000);
---  v_caller  varchar2(4000);
 
     v_caller_type      operation_log_table.caller_type      %type;
     v_caller_name      operation_log_table.caller_name      %type;
@@ -93,7 +92,6 @@ create or replace package body operation_log as
     v_cnt_children          number;
     c_txt_width    constant number  := 120;
     c_caller_width constant number  := 150;
-    c_curly_braces          boolean := false;
     v_clob                  char(8);
 
   begin
@@ -117,7 +115,7 @@ create or replace package body operation_log as
                                 v_caller_owner 
                               );
 
-    if c_curly_braces and v_cnt_children > 0 then 
+    if p_curly_braces and v_cnt_children > 0 then 
        dbms_output.put_line(' ' || chr(123));
     else
        dbms_output.put_line('');
@@ -125,10 +123,10 @@ create or replace package body operation_log as
 
 
     for r in (select id from operation_log_table where id_parent = p_id        order by id) loop
-        print_id_recursively(r.id, p_level + 1);
+        print_id_recursively(r.id, p_level + 1, p_curly_braces => p_curly_braces);
     end loop;
 
-    if c_curly_braces then
+    if p_curly_braces then
        if v_cnt_children > 0  then
           dbms_output.put_line(lpad(' ', (p_level) * 2) || chr(125));
        end if;

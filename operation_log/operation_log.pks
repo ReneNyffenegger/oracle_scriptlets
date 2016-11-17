@@ -5,7 +5,7 @@ create or replace package operation_log as
   procedure indent(txt varchar2);
   procedure dedent(txt varchar2 := null);
 
-  procedure print_id_recursively(p_id number, p_level number := 0);
+  procedure print_id_recursively(p_id number, p_level number := 0, p_curly_braces boolean := false);
 
   procedure find_last_root_ids(p_count number := 20);
 
