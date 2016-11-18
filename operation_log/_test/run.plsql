@@ -3,6 +3,10 @@ drop     sequence operation_log_seq;
 create   sequence operation_log_seq start with 1;
 alter    package  operation_log compile;
 
+drop package operation_log_test;
+drop table operation_log_table_expected purge;
+drop table operation_log_table_gotten   purge;
+
 create table operation_log_table_expected ( -- {
    id                       number,
 -- tm                       date,
@@ -22,35 +26,42 @@ create table operation_log_table_expected ( -- {
 /
 
 -- {  Expected data
---                                             (        ID   TXT                     CALLER_TYPE        CALLER_NAME              CALLER_PKG_NAME      CALLER_LINE  CALLER_OWNER     I     ID_PARENT   ERROR_BACKTRACE, CLOB_
---                                             (----------,  ---------------------,  ----------------,  --------------------- ,  --------------------,-----------, -------------,  '-' , ----------,  ---------------  -----
-insert into operation_log_table_expected values(         1, 'Foo Bar Baz'         , 'PROCEDURE'      , 'PROC_A'               , 'OPERATION_LOG_TEST' ,          6, user         ,  'N' ,       null,  null           , null);  
-insert into operation_log_table_expected values(         2, 'Iterating i 1 .. 3'  , 'PROCEDURE'      , 'PROC_A'               , 'OPERATION_LOG_TEST' ,          8, user         ,  'N' ,       null,  null           , null);
-insert into operation_log_table_expected values(         3, 'i: 1'                , 'PROCEDURE'      , 'PROC_A'               , 'OPERATION_LOG_TEST' ,         12, user         ,  'N' ,          2,  null           , null);
-insert into operation_log_table_expected values(         4, 'Iterating j 1 .. 1'  , 'PROCEDURE'      , 'PROC_A'               , 'OPERATION_LOG_TEST' ,         14, user         ,  'N' ,          2,  null           , null);
-insert into operation_log_table_expected values(         5, 'j: 1'                , 'PROCEDURE'      , 'PROC_A'               , 'OPERATION_LOG_TEST' ,         17, user         ,  'N' ,          4,  null           , null);
-insert into operation_log_table_expected values(         6, 'finished'            , 'PROCEDURE'      , 'PROC_A'               , 'OPERATION_LOG_TEST' ,         20, user         ,  'N' ,          2,  null           , null);
-insert into operation_log_table_expected values(         7, 'i: 2'                , 'PROCEDURE'      , 'PROC_A'               , 'OPERATION_LOG_TEST' ,         12, user         ,  'N' ,          2,  null           , null);
-insert into operation_log_table_expected values(         8, 'Iterating j 1 .. 2'  , 'PROCEDURE'      , 'PROC_A'               , 'OPERATION_LOG_TEST' ,         14, user         ,  'N' ,          2,  null           , null);
-insert into operation_log_table_expected values(         9, 'j: 1'                , 'PROCEDURE'      , 'PROC_A'               , 'OPERATION_LOG_TEST' ,         17, user         ,  'N' ,          8,  null           , null);
-insert into operation_log_table_expected values(        10, 'j: 2'                , 'PROCEDURE'      , 'PROC_A'               , 'OPERATION_LOG_TEST' ,         17, user         ,  'N' ,          8,  null           , null);
-insert into operation_log_table_expected values(        11, 'finished'            , 'PROCEDURE'      , 'PROC_A'               , 'OPERATION_LOG_TEST' ,         20, user         ,  'N' ,          2,  null           , null);
-insert into operation_log_table_expected values(        12, 'i: 3'                , 'PROCEDURE'      , 'PROC_A'               , 'OPERATION_LOG_TEST' ,         12, user         ,  'N' ,          2,  null           , null);
-insert into operation_log_table_expected values(        13, 'Iterating j 1 .. 3'  , 'PROCEDURE'      , 'PROC_A'               , 'OPERATION_LOG_TEST' ,         14, user         ,  'N' ,          2,  null           , null);
-insert into operation_log_table_expected values(        14, 'j: 1'                , 'PROCEDURE'      , 'PROC_A'               , 'OPERATION_LOG_TEST' ,         17, user         ,  'N' ,         13,  null           , null);
-insert into operation_log_table_expected values(        15, 'j: 2'                , 'PROCEDURE'      , 'PROC_A'               , 'OPERATION_LOG_TEST' ,         17, user         ,  'N' ,         13,  null           , null);
-insert into operation_log_table_expected values(        16, 'j: 3'                , 'PROCEDURE'      , 'PROC_A'               , 'OPERATION_LOG_TEST' ,         17, user         ,  'N' ,         13,  null           , null);
-insert into operation_log_table_expected values(        17, 'finished'            , 'PROCEDURE'      , 'PROC_A'               , 'OPERATION_LOG_TEST' ,         20, user         ,  'N' ,          2,  null           , null);
-insert into operation_log_table_expected values(        18, 'operation_log_test_p', 'PROCEDURE'      , 'OPERATION_LOG_TEST_P' ,  null                ,          4, user         ,  'N' ,          2,  null           , null);
-insert into operation_log_table_expected values(        19, 'in op log proc'      , 'PROCEDURE'      , 'OPERATION_LOG_TEST_P' ,  null                ,          6, user         ,  'N' ,         18,  null           , null);
-insert into operation_log_table_expected values(        20, 'proc_b'              , 'PROCEDURE'      , 'PROC_B'               , 'OPERATION_LOG_TEST' ,         35, user         ,  'N' ,          2,  null           , null);
-insert into operation_log_table_expected values(        21, 'testing a clob'      , 'PROCEDURE'      , 'PROC_B'               , 'OPERATION_LOG_TEST' ,         37, user         ,  'N' ,         20,  null           ,'This is the clob');
+--                                             (        ID   TXT                                         CALLER_TYPE        CALLER_NAME              CALLER_PKG_NAME      CALLER_LINE  CALLER_OWNER     I     ID_PARENT   ERROR_BACKTRACE                                              , CLOB_
+--                                             (----------,  ---------------------                    ,  ----------------,  --------------------- ,  --------------------,-----------, -------------,  '-' , ----------,  ---------------                                                -----
+insert into operation_log_table_expected values(         1, 'proc_a'                                  , 'PROCEDURE'      , 'PROC_A'               , 'OPERATION_LOG_TEST' ,          6, user         ,  'N' ,       null,  null                                                         , null);  
+insert into operation_log_table_expected values(         2, 'Iterating i 1 .. 3'                      , 'PROCEDURE'      , 'PROC_A'               , 'OPERATION_LOG_TEST' ,          8, user         ,  'N' ,       null,  null                                                         , null);
+insert into operation_log_table_expected values(         3, 'i: 1'                                    , 'PROCEDURE'      , 'PROC_A'               , 'OPERATION_LOG_TEST' ,         12, user         ,  'N' ,          2,  null                                                         , null);
+insert into operation_log_table_expected values(         4, 'Iterating j 1 .. 1'                      , 'PROCEDURE'      , 'PROC_A'               , 'OPERATION_LOG_TEST' ,         14, user         ,  'N' ,          2,  null                                                         , null);
+insert into operation_log_table_expected values(         5, 'j: 1'                                    , 'PROCEDURE'      , 'PROC_A'               , 'OPERATION_LOG_TEST' ,         17, user         ,  'N' ,          4,  null                                                         , null);
+insert into operation_log_table_expected values(         6, 'finished'                                , 'PROCEDURE'      , 'PROC_A'               , 'OPERATION_LOG_TEST' ,         20, user         ,  'N' ,          2,  null                                                         , null);
+insert into operation_log_table_expected values(         7, 'i: 2'                                    , 'PROCEDURE'      , 'PROC_A'               , 'OPERATION_LOG_TEST' ,         12, user         ,  'N' ,          2,  null                                                         , null);
+insert into operation_log_table_expected values(         8, 'Iterating j 1 .. 2'                      , 'PROCEDURE'      , 'PROC_A'               , 'OPERATION_LOG_TEST' ,         14, user         ,  'N' ,          2,  null                                                         , null);
+insert into operation_log_table_expected values(         9, 'j: 1'                                    , 'PROCEDURE'      , 'PROC_A'               , 'OPERATION_LOG_TEST' ,         17, user         ,  'N' ,          8,  null                                                         , null);
+insert into operation_log_table_expected values(        10, 'j: 2'                                    , 'PROCEDURE'      , 'PROC_A'               , 'OPERATION_LOG_TEST' ,         17, user         ,  'N' ,          8,  null                                                         , null);
+insert into operation_log_table_expected values(        11, 'finished'                                , 'PROCEDURE'      , 'PROC_A'               , 'OPERATION_LOG_TEST' ,         20, user         ,  'N' ,          2,  null                                                         , null);
+insert into operation_log_table_expected values(        12, 'i: 3'                                    , 'PROCEDURE'      , 'PROC_A'               , 'OPERATION_LOG_TEST' ,         12, user         ,  'N' ,          2,  null                                                         , null);
+insert into operation_log_table_expected values(        13, 'Iterating j 1 .. 3'                      , 'PROCEDURE'      , 'PROC_A'               , 'OPERATION_LOG_TEST' ,         14, user         ,  'N' ,          2,  null                                                         , null);
+insert into operation_log_table_expected values(        14, 'j: 1'                                    , 'PROCEDURE'      , 'PROC_A'               , 'OPERATION_LOG_TEST' ,         17, user         ,  'N' ,         13,  null                                                         , null);
+insert into operation_log_table_expected values(        15, 'j: 2'                                    , 'PROCEDURE'      , 'PROC_A'               , 'OPERATION_LOG_TEST' ,         17, user         ,  'N' ,         13,  null                                                         , null);
+insert into operation_log_table_expected values(        16, 'j: 3'                                    , 'PROCEDURE'      , 'PROC_A'               , 'OPERATION_LOG_TEST' ,         17, user         ,  'N' ,         13,  null                                                         , null);
+insert into operation_log_table_expected values(        17, 'finished'                                , 'PROCEDURE'      , 'PROC_A'               , 'OPERATION_LOG_TEST' ,         20, user         ,  'N' ,          2,  null                                                         , null);
+insert into operation_log_table_expected values(        18, 'operation_log_test_p'                    , 'PROCEDURE'      , 'OPERATION_LOG_TEST_P' ,  null                ,          4, user         ,  'N' ,          2,  null                                                         , null);
+insert into operation_log_table_expected values(        19, 'in op log proc'                          , 'PROCEDURE'      , 'OPERATION_LOG_TEST_P' ,  null                ,          6, user         ,  'N' ,         18,  null                                                         , null);
+insert into operation_log_table_expected values(        20, 'proc_b'                                  , 'PROCEDURE'      , 'PROC_B'               , 'OPERATION_LOG_TEST' ,         43, user         ,  'N' ,          2,  null                                                         , null);
+insert into operation_log_table_expected values(        21, 'testing a clob'                          , 'PROCEDURE'      , 'PROC_B'               , 'OPERATION_LOG_TEST' ,         45, user         ,  'N' ,         20,  null                                                         ,'This is the clob');
+insert into operation_log_table_expected values(        22, 'proc_c'                                  , 'PROCEDURE'      , 'PROC_C'               , 'OPERATION_LOG_TEST' ,         61, user         ,  'N' ,         20,  null                                                         , null);
+insert into operation_log_table_expected values(        23, 'Not going to throw'                      , 'PROCEDURE'      , 'PROC_C'               , 'OPERATION_LOG_TEST' ,         67, user         ,  'N' ,         22,  null                                                         , null);
+insert into operation_log_table_expected values(        24, 'proc_c'                                  , 'PROCEDURE'      , 'PROC_C'               , 'OPERATION_LOG_TEST' ,         61, user         ,  'N' ,         20,  null                                                         , null);
+insert into operation_log_table_expected values(        25, 'Going to throw'                          , 'PROCEDURE'      , 'PROC_C'               , 'OPERATION_LOG_TEST' ,         64, user         ,  'N' ,         24,  null                                                         , null);
+insert into operation_log_table_expected values(        26, 'ORA-01476: divisor is equal to zero'     , 'PROCEDURE'      , 'EXC'                  , 'OPERATION_LOG'      ,         87, user         ,  'Y' ,         24, 'ORA-06512: at "RENE.OPERATION_LOG_TEST", line 65' || chr(10) , null);
+insert into operation_log_table_expected values(        27, 'expected exception caught'               , 'PROCEDURE'      , 'PROC_A'               , 'OPERATION_LOG_TEST' ,         32, user         ,  'N' ,          2,  null                                                         , null);
  -- }
 
 create or replace package operation_log_test as -- {
 
     procedure proc_a;
     procedure proc_b;
+    procedure proc_c(throw_exc boolean);
 
 end operation_log_test; -- }
 /
@@ -72,7 +83,7 @@ create or replace package body operation_log_test as -- {
     procedure proc_a is -- {
     begin
 
-        operation_log.log_('Foo Bar Baz');
+        operation_log.log_('proc_a');
 
         operation_log.indent('Iterating i 1 .. 3');
 
@@ -96,6 +107,14 @@ create or replace package body operation_log_test as -- {
 
         operation_log.dedent;
 
+    exception
+       when operation_log.exception_ then
+         operation_log.log_('expected exception caught');
+         operation_log.dedent; 
+
+       when others then
+         operation_log.exc;
+
     end proc_a; -- }
 
     procedure proc_b is -- {
@@ -105,9 +124,36 @@ create or replace package body operation_log_test as -- {
 
       operation_log.log_('testing a clob', clob_ => 'This is the clob');
 
+      proc_c(false);
+      proc_c( true);
+
       operation_log.dedent;
 
-    end proc_b;
+    exception when others then
+
+       operation_log.exc;
+
+    end proc_b; -- }
+
+    procedure proc_c(throw_exc boolean) is -- {
+    begin
+
+      operation_log.indent('proc_c');
+
+      if throw_exc then
+         operation_log.log_('Going to throw');
+         dbms_output.put_line('division by zero: ' || (42/0));
+      else
+         operation_log.log_('Not going to throw');
+      end if;
+
+      operation_log.dedent;
+
+    exception when others then
+
+       operation_log.exc;
+
+    end proc_c; -- }
 
 end operation_log_test; -- }
 /
@@ -115,7 +161,7 @@ show errors
 
 exec operation_log_test.proc_a
 
-create table operation_log_table_gotten as select
+create table operation_log_table_gotten as select -- {
   id,
   txt,
   --
@@ -130,7 +176,7 @@ create table operation_log_table_gotten as select
   error_backtrace,
   cast(clob_ as varchar2(200)) clob_
 from
-  operation_log_table
+  operation_log_table -- }
 ;
 
 exec operation_log.print_id_recursively(2)
@@ -183,6 +229,6 @@ from
 order by id;
 */
 
-drop package operation_log_test;
-drop table operation_log_table_expected purge;
-drop table operation_log_table_gotten   purge;
+-- drop package operation_log_test;
+-- drop table operation_log_table_expected purge;
+-- drop table operation_log_table_gotten   purge;

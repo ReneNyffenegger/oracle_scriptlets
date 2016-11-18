@@ -78,6 +78,20 @@ create or replace package body operation_log as
 
   end dedent; -- }
 
+  procedure exc(txt varchar2 := null) is -- {
+  begin
+
+    if sqlcode = c_ex_num then
+       dedent(txt);
+    else
+       log_(sqlerrm, is_exception => true);
+       dedent(txt);
+    end if;
+
+    raise_application_error(c_ex_num, sqlerrm);
+
+  end exc; -- }
+
   procedure print_id_recursively(p_id number, p_level number := 0, p_curly_braces boolean := false) is -- {
     v_first   boolean := true;
     v_tm      varchar2(21);
