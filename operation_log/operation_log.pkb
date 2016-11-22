@@ -25,7 +25,7 @@ create or replace package body operation_log as
 
     insert into operation_log_table values (operation_log_seq.nextval, sysdate, p_txt,
       v_caller.type_,
-      v_caller.name_,
+      substr(v_caller.name_, 1, 30), -- TODO 2016-11-22: This substr is necessarey because of »0X459AF82320        40  ANONYMOUS BLOCK«
       v_caller.pkg_name,
       v_caller.line,
       v_caller.owner,
