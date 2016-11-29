@@ -106,7 +106,7 @@ create or replace package body operation_log as
     v_cnt_children          number;
     c_txt_width    constant number  := 120;
     c_caller_width constant number  := 150;
-    v_clob                  char(8);
+    v_clob                  varchar(8);
 
   begin
 
@@ -120,14 +120,16 @@ create or replace package body operation_log as
     dbms_output.put( substr(rpad( 
                                 lpad(' ', p_level * 2) || replace(v_txt, chr(10), ' '),
                                 c_caller_width), 
-                                1, c_txt_width)   || ' ' ||
-                                v_clob            ||
-                                v_tm              || ' ' || 
-                                v_caller_name     ||
-                                v_caller_pkg_name ||
-                                v_caller_line     ||
-                                v_caller_owner 
-                              );
+                                1, c_txt_width
+                             )    || ' ' ||
+                             &tq84_prefix.string_op.sprintf('%8s %s %-30s %-30s %4d %-30s',
+                                 v_clob            ,
+                                 v_tm              ,
+                                 v_caller_name     ,
+                                 v_caller_pkg_name ,
+                                 v_caller_line     ,
+                                 v_caller_owner 
+                              ));
 
     if p_curly_braces and v_cnt_children > 0 then 
        dbms_output.put_line(' ' || chr(123));
@@ -174,3 +176,4 @@ create or replace package body operation_log as
 end operation_log;
 /
 show errors
+
