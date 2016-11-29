@@ -260,18 +260,22 @@ create or replace package body &tq84_prefix.string_op as
 
   end sprintf; -- }
 
-  function sprintf(format varchar2, parm_01 varchar2                                                      ) return varchar2 is begin return sprintf(format, &tq84_prefix.varchar2_t(parm_01                           )); end sprintf;
-  function sprintf(format varchar2, parm_01 varchar2, parm_02 varchar2                                    ) return varchar2 is begin return sprintf(format, &tq84_prefix.varchar2_t(parm_01, parm_02                  )); end sprintf;
-  function sprintf(format varchar2, parm_01 varchar2, parm_02 varchar2, parm_03 varchar2                  ) return varchar2 is begin return sprintf(format, &tq84_prefix.varchar2_t(parm_01, parm_02, parm_03         )); end sprintf;
-  function sprintf(format varchar2, parm_01 varchar2, parm_02 varchar2, parm_03 varchar2, parm_04 varchar2) return varchar2 is begin return sprintf(format, &tq84_prefix.varchar2_t(parm_01, parm_02, parm_03, parm_04)); end sprintf;
+  function sprintf(format varchar2, parm_01 varchar2                                                                                          ) return varchar2 is begin return sprintf(format, &tq84_prefix.varchar2_t(parm_01                                             )); end sprintf;
+  function sprintf(format varchar2, parm_01 varchar2, parm_02 varchar2                                                                        ) return varchar2 is begin return sprintf(format, &tq84_prefix.varchar2_t(parm_01, parm_02                                    )); end sprintf;
+  function sprintf(format varchar2, parm_01 varchar2, parm_02 varchar2, parm_03 varchar2                                                      ) return varchar2 is begin return sprintf(format, &tq84_prefix.varchar2_t(parm_01, parm_02, parm_03                           )); end sprintf;
+  function sprintf(format varchar2, parm_01 varchar2, parm_02 varchar2, parm_03 varchar2, parm_04 varchar2                                    ) return varchar2 is begin return sprintf(format, &tq84_prefix.varchar2_t(parm_01, parm_02, parm_03, parm_04                  )); end sprintf;
+  function sprintf(format varchar2, parm_01 varchar2, parm_02 varchar2, parm_03 varchar2, parm_04 varchar2, parm_05 varchar2                  ) return varchar2 is begin return sprintf(format, &tq84_prefix.varchar2_t(parm_01, parm_02, parm_03, parm_04, parm_05         )); end sprintf;
+  function sprintf(format varchar2, parm_01 varchar2, parm_02 varchar2, parm_03 varchar2, parm_04 varchar2, parm_05 varchar2, parm_06 varchar2) return varchar2 is begin return sprintf(format, &tq84_prefix.varchar2_t(parm_01, parm_02, parm_03, parm_04, parm_05, parm_06)); end sprintf;
  -- }
 
 -- printf related -- {
   procedure printf(format varchar2, parms in &tq84_prefix.varchar2_t) is begin dbms_output.put_line(sprintf(format, parms)); end printf;
-  procedure printf(format varchar2, parm_01 varchar2                                                      ) is begin dbms_output.put_line(sprintf(format, parm_01                           )); end printf;
-  procedure printf(format varchar2, parm_01 varchar2, parm_02 varchar2                                    ) is begin dbms_output.put_line(sprintf(format, parm_01, parm_02                  )); end printf;
-  procedure printf(format varchar2, parm_01 varchar2, parm_02 varchar2, parm_03 varchar2                  ) is begin dbms_output.put_line(sprintf(format, parm_01, parm_02, parm_03         )); end printf;
-  procedure printf(format varchar2, parm_01 varchar2, parm_02 varchar2, parm_03 varchar2, parm_04 varchar2) is begin dbms_output.put_line(sprintf(format, parm_01, parm_02, parm_03, parm_04)); end printf;
+  procedure printf(format varchar2, parm_01 varchar2                                                                                          ) is begin dbms_output.put_line(sprintf(format, parm_01                                             )); end printf;
+  procedure printf(format varchar2, parm_01 varchar2, parm_02 varchar2                                                                        ) is begin dbms_output.put_line(sprintf(format, parm_01, parm_02                                    )); end printf;
+  procedure printf(format varchar2, parm_01 varchar2, parm_02 varchar2, parm_03 varchar2                                                      ) is begin dbms_output.put_line(sprintf(format, parm_01, parm_02, parm_03                           )); end printf;
+  procedure printf(format varchar2, parm_01 varchar2, parm_02 varchar2, parm_03 varchar2, parm_04 varchar2                                    ) is begin dbms_output.put_line(sprintf(format, parm_01, parm_02, parm_03, parm_04                  )); end printf;
+  procedure printf(format varchar2, parm_01 varchar2, parm_02 varchar2, parm_03 varchar2, parm_04 varchar2, parm_05 varchar2                  ) is begin dbms_output.put_line(sprintf(format, parm_01, parm_02, parm_03, parm_04, parm_05         )); end printf;
+  procedure printf(format varchar2, parm_01 varchar2, parm_02 varchar2, parm_03 varchar2, parm_04 varchar2, parm_05 varchar2, parm_06 varchar2) is begin dbms_output.put_line(sprintf(format, parm_01, parm_02, parm_03, parm_04, parm_05, parm_06)); end printf;
  -- }
 
   function is_number(str varchar2) return boolean is -- {
