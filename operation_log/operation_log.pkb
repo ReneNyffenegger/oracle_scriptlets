@@ -118,7 +118,12 @@ create or replace package body operation_log as
     select count(*) into v_cnt_children from operation_log_table where id_parent = p_id;
 
     dbms_output.put( substr(rpad( 
-                                lpad(' ', p_level * 2) || replace(v_txt, chr(10), ' '),
+                                lpad(' ', p_level * 2) || 
+                                   replace(
+                                   replace(
+                                   replace(v_txt, chr( 10), ' '),
+                                                  chr(123), ' '), -- opening curly brace
+                                                  chr(125), ' '), -- closing curly brace
                                 c_caller_width), 
                                 1, c_txt_width
                              )    || ' ' ||
@@ -176,4 +181,3 @@ create or replace package body operation_log as
 end operation_log;
 /
 show errors
-
