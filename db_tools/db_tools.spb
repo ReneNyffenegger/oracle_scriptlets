@@ -1,0 +1,73 @@
+create or replace package body &tq84_prefix.db_tools as
+
+    procedure search_views(p_regexp varchar2, p_owner varchar2 := null) is -- {
+    
+      view_text_clob clob;
+    
+      function extract_view_text(owner varchar2, name varchar2) return clob is -- {
+          ret  clob;
+          stmt integer;
+          rc   number;
+    
+          long_val long;
+          long_len integer;
+          buf_len  integer := 32760;
+          pos      number  :=     0;
+    
+      begin
+    
+          stmt := dbms_sql.open_cursor;
+    
+          dbms_sql.parse(stmt, 'select text from all_views where owner = :owner and view_name = :name', dbms_sql.native);
+    
+          dbms_sql.bind_variable(stmt, 'owner', owner);
+          dbms_sql.bind_variable(stmt, 'name' , name );
+    
+          dbms_sql.define_column_long(stmt, 1);
+    
+          rc := dbms_sql.execute(stmt);
+          if rc != 0 then
+             raise_application_error(-20800, 'rc != 0');
+          end if;
+    
+          rc := dbms_sql.fetch_rows(stmt);
+          if rc != 1 then
+             raise_application_error(-20800, 'rc != 1');
+          end if;
+    
+    
+          dbms_lob.createtemporary(ret, false, dbms_lob.call);
+          
+          loop
+    
+            dbms_sql.column_value_long(stmt, 1 /* col position */, buf_len, pos, long_val, long_len);
+            exit when long_len = 0;
+    
+            dbms_lob.append(ret, long_val);
+            pos := pos + long_len;
+    
+          end loop;
+    
+          dbms_sql.close_cursor(stmt);
+    
+          return ret;
+    
+      end extract_view_text; -- }
+    
+    begin
+      
+      for vw in (select owner, view_name from all_views where owner = nvl(p_owner, owner)) loop
+          view_text_clob := extract_view_text(vw.owner, vw.view_name);
+    
+          if regexp_like(view_text_clob, p_regexp) then
+             dbms_output.put_line('matches:        ' || vw.owner || '.' || vw.view_name);
+    --    else
+    --       dbms_output.put_line('does not match: ' || vw.owner || '.' || vw.view_name);
+          end if;
+    
+      end loop;
+      
+    end search_views; -- }
+
+end &tq84_prefix.db_tools;
+/
