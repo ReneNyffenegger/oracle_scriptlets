@@ -1,6 +1,9 @@
 --
 --   Who blocks whom
 --
+--   TODO:
+--     select * from v$lock where type in ('TX', 'TM');
+--
 
 with locks as (
   select /*+ materialize */
