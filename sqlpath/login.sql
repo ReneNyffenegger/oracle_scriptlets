@@ -1,5 +1,6 @@
 set serveroutput on size 999999 format wrapped
-set feedback off
+set feedback         off
+set verify           off
 set lines            200
 set pages           5000
 set long          100000
