@@ -1,5 +1,6 @@
---
---   Compare with -> mysid.sql
+--  See also
+--    -> mysid.sql
+--    -> who-am-i.sql
 --
 select
   p.pid   oracle_process_id,
