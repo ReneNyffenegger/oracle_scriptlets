@@ -1,5 +1,5 @@
 --
---  Show information about obect etc for a rowid.
+--  Show information about objects etc. for a rowid.
 --
 set verify off
 
