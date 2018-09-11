@@ -1,14 +1,14 @@
 create or replace package body tq84_txt as
 
-   function rpd(txt varchar2, len_ number) return varchar2 is
+   function rpd(txt varchar2, len_ number) return varchar2 is -- {
    begin
        if txt is null then
           return rpad(' ', len_);
        end if;
        return rpad(txt, len_);
-   end rpd;
+   end rpd; -- }
 
-   function num(nm number, pattern varchar2) return varchar2 is
+   function num(nm number, pattern varchar2) return varchar2 is -- {
    begin
 
        if nm is null then
@@ -16,9 +16,9 @@ create or replace package body tq84_txt as
        end if;
 
        return to_char(nm, pattern);
-   end num;
+   end num; -- }
 
-   function num(nm number, len_left_of_dot pls_integer, len_right_of_dot pls_integer := 0) return varchar2 is
+   function num(nm number, len_left_of_dot pls_integer, len_right_of_dot pls_integer := 0) return varchar2 is -- {
       pattern varchar2(100);
    begin
 
@@ -32,12 +32,28 @@ create or replace package body tq84_txt as
 
      return num(nm, pattern);
 
-   end num;
+   end num; -- }
 
-   function dt(d date) return varchar2 is
+   function dt(d date) return varchar2 is -- {
    begin
        return to_char(d, 'yyyy-mm-dd');
-   end dt;
+   end dt; -- }
+
+   function export(nm number) return varchar2 is -- {
+   begin
+       if nm is null then
+          return 'null';
+       end if;
+       return nm;
+   end export; -- }
+
+   function export(txt varchar2) return varchar2 is -- {
+   begin
+       if txt is null then
+          return 'null';
+       end if;
+       return '''' || replace(txt, '''', '''''') || '''';
+   end export; -- }
 
 end tq84_txt;
 /

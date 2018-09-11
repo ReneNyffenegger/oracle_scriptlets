@@ -6,5 +6,8 @@ create or replace package tq84_txt as
 
     function num(nm number, len_left_of_dot pls_integer, len_right_of_dot pls_integer := 0) return varchar2;
 
+    function export(nm  number  ) return varchar2;
+    function export(txt varchar2) return varchar2;
+
 end tq84_txt;
 /
