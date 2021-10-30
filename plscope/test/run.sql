@@ -24,9 +24,9 @@ end;
 
 create user tq84_plscope_test 
    identified by tq84_plscope_test
-   default   tablespace users
-   temporary tablespace temp_ts
-   quota unlimited on users;
+   default   tablespace data
+   temporary tablespace temp
+   quota unlimited on data;
 
 grant
   create procedure,
